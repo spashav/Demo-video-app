@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as ReactDOMServer from 'react-dom/server';
 import isbot from 'isbot';
 
-import App from '../components/app/app';
+import { App } from '../components/app/app';
 
 import { StaticRouter } from 'react-router-dom/server';
 

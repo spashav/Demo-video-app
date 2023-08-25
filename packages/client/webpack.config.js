@@ -1,3 +1,4 @@
+const path = require('path')
 const { composePlugins, withNx } = require('@nx/webpack');
 const { withReact } = require('@nx/react');
 
@@ -5,5 +6,11 @@ const { withReact } = require('@nx/react');
 module.exports = composePlugins(withNx(), withReact(), (config) => {
   // Update the webpack config as needed here.
   // e.g. `config.plugins.push(new MyPlugin())`
+  if (config.target === 'web') {
+    config.entry.loader = path.resolve(__dirname, './src/entry/loader.ts')
+    config.entry.player = path.resolve(__dirname, './src/entry/player.ts')
+    config.entry.player_iframe = path.resolve(__dirname, './src/entry/player-iframe.ts')
+    config.entry.player_skin = path.resolve(__dirname, './src/entry/player-skin.ts')
+  }
   return config;
 });
