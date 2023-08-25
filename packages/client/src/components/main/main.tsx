@@ -14,9 +14,6 @@ export function Main() {
           <li>
             <Link to="/watch/1">Watch</Link>
           </li>
-          <li>
-            <Link to="/player/1.1/1">Player</Link>
-          </li>
         </ul>
       </div>
     </div>

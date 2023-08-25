@@ -4,13 +4,12 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { App } from '../components/app/app';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
+ReactDOM.hydrateRoot(
+  document.getElementById('root') as HTMLElement,
   <StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
   </StrictMode>
-);
+)
+console.log(11111)

@@ -1,3 +1,16 @@
 .watch {
+  width: 500px;
+}
 
+.playerCont {
+  padding-bottom: 64%;
+  position: relative;
+}
+
+.player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }

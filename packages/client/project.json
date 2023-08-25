@@ -11,7 +11,6 @@
       "options": {
         "compiler": "babel",
         "outputPath": "dist/packages/client/browser",
-        "index": "packages/client/src/index.html",
         "baseHref": "/",
         "main": "packages/client/src/entry/client.tsx",
         "tsConfig": "packages/client/tsconfig.app.json",
@@ -32,12 +31,6 @@
           "vendorChunk": true
         },
         "production": {
-          "fileReplacements": [
-            {
-              "replace": "packages/client/src/environments/environment.ts",
-              "with": "packages/client/src/environments/environment.prod.ts"
-            }
-          ],
           "optimization": true,
           "outputHashing": "all",
           "sourceMap": false,

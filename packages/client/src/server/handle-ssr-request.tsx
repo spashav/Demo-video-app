@@ -1,23 +1,15 @@
 import type { Request, Response } from 'express';
-import * as fs from 'fs';
 import * as ReactDOMServer from 'react-dom/server';
 import isbot from 'isbot';
 
-import { App } from '../components/app/app';
-
 import { StaticRouter } from 'react-router-dom/server';
+import { ComponentType } from 'react';
 
-let indexHtml: null | string = null;
-
-export function handleSsrRequest(indexPath: string) {
+export function handleSsrRequest(template: () => string, Comp: ComponentType) {
   return function render(req: Request, res: Response) {
     let didError = false;
 
-    if (!indexHtml) {
-      indexHtml = fs.readFileSync(indexPath).toString();
-    }
-
-    const [htmlStart, htmlEnd] = indexHtml.split(`<div id="root"></div>`);
+    const [htmlStart, htmlEnd] = template().split(`<div id="root"></div>`);
 
     // For bots (e.g. search engines), the content will not be streamed but render all at once.
     // For users, content should be streamed to the user as they are ready.
@@ -27,7 +19,7 @@ export function handleSsrRequest(indexPath: string) {
 
     const stream = ReactDOMServer.renderToPipeableStream(
       <StaticRouter location={req.originalUrl}>
-        <App />
+        <Comp />
       </StaticRouter>,
       {
         [callbackName]() {
