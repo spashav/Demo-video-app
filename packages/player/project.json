@@ -1,0 +1,16 @@
+{
+  "name": "player",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/player/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/player/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

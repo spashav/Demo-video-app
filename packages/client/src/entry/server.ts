@@ -7,7 +7,7 @@ import { initApiRouter } from '../server/api-router';
 import { appTemplate } from '../server/app-template';
 import { playerEmbedTemplate } from '../server/player-embed-template';
 import { App } from '../components/app/app';
-import { App as PlayerEmbed } from '../player/components/app/app';
+import { App as PlayerEmbed } from '@demo-video-app/player/src/components/app/app';
 
 const port = process.env['PORT'] || 4200;
 const app = express();

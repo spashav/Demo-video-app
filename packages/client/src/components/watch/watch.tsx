@@ -1,8 +1,8 @@
 import styles from './watch.module.css';
 
-import {Link, useParams} from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { getPlayerPublicApi } from '../../player/public-api';
+import { getPlayerPublicApi } from '@demo-video-app/player/src/public-api';
 
 const CONTAINER_ID = '#player';
 
@@ -10,7 +10,7 @@ export function Watch() {
   const { id } = useParams();
   useEffect(() => {
     if (!id) {
-      return
+      return;
     }
     getPlayerPublicApi().iframe.setSource({
       id,
@@ -19,7 +19,7 @@ export function Watch() {
   }, []);
 
   if (!id) {
-    return <div className={styles.watch}>Empty id in url</div>
+    return <div className={styles.watch}>Empty id in url</div>;
   }
 
   return (

@@ -2,7 +2,7 @@ import { useEffect, useRef, FC } from 'react';
 import videojs from 'video.js';
 import type PlayerApi from 'video.js/dist/types/player';
 
-import '../../../../../../node_modules/video.js/dist/video-js.css';
+import '../../../../../node_modules/video.js/dist/video-js.css';
 
 interface InitOptions {
   autoplay?: boolean;
