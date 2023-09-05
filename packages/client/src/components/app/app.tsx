@@ -9,7 +9,7 @@ export function App() {
     <div className={styles.app}>
       <Routes>
         <Route path="/" element={<Main />} />
-        <Route path="/watch/:id" element={<Watch id={'1'} />} />
+        <Route path="/watch/:id" element={<Watch />} />
       </Routes>
     </div>
   );

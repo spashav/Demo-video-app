@@ -1,18 +1,26 @@
 import styles from './watch.module.css';
 
-import { Link } from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import { useEffect } from 'react';
 import { getPlayerPublicApi } from '../../player/public-api';
 
 const CONTAINER_ID = '#player';
 
-export function Watch({ id }: { id: string }) {
+export function Watch() {
+  const { id } = useParams();
   useEffect(() => {
+    if (!id) {
+      return
+    }
     getPlayerPublicApi().iframe.setSource({
       id,
       container: CONTAINER_ID,
     });
   }, []);
+
+  if (!id) {
+    return <div className={styles.watch}>Empty id in url</div>
+  }
 
   return (
     <div className={styles.watch}>

@@ -9,6 +9,9 @@ export const init = () => {
     container: string;
   }) => {
     const elem = document.getElementById(container);
+    if (!id) {
+      throw new Error(`Empty id`);
+    }
     if (!elem) {
       throw new Error(`No container found`);
     }
