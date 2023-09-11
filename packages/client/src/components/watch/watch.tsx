@@ -12,9 +12,14 @@ export function Watch() {
     if (!id) {
       return;
     }
-    getPlayerPublicApi().iframe.setSource({
+    const playerApiPromise = getPlayerPublicApi().iframe.setSource({
       id,
       container: CONTAINER_ID,
+    });
+    playerApiPromise.then((playerApi) => {
+      playerApi.onCurrentTimeChange((state) => {
+        console.log('onPlayingStateChange', state);
+      });
     });
   }, []);
 

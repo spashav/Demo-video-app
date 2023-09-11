@@ -1,5 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { Player } from '../player/player';
+import { useEffect, useState } from 'react';
+import { PlayerApiInnerIframe } from './player-iframe-api';
 
 const sources = [
   {
@@ -11,18 +13,24 @@ const sources = [
   {
     //src: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
     src: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/playlist.m3u8',
-    poster: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
+    poster:
+      'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
     type: 'application/x-mpegURL',
   },
 ];
 
 export function PlayerIframe() {
   const { id, version } = useParams();
+  const [player] = useState(() => new PlayerApiInnerIframe());
+  useEffect(() => {
+    return player.initPostMessageListener();
+  }, []);
   if (!id || !version) {
     return <div>Empty id or version in url</div>;
   }
   return (
     <Player
+      overridePlayerApi={player}
       options={{
         sources: [sources[parseInt(id, 10) % 2]],
       }}

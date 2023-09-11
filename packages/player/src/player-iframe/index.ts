@@ -1,7 +1,9 @@
 import { getPlayerPublicApi } from '../public-api';
+import { PlayerIframeApiAdapter } from '@demo-video-app/player/src/player-iframe/player-iframe-api-adapter';
 
 export const init = () => {
-  getPlayerPublicApi().iframe.setSource = ({
+  const api = getPlayerPublicApi();
+  api.iframe.setSource = async ({
     id,
     container,
   }: {
@@ -17,5 +19,16 @@ export const init = () => {
     }
     const { width, height } = elem.getBoundingClientRect();
     elem.innerHTML = `<iframe src="/player/1.1/${id}" width="${width}px" height="${height}px"/>`;
+    const iframe = elem.querySelector('iframe');
+    const iframeWindow = iframe?.contentWindow;
+    if (!iframeWindow) {
+      throw new Error(`Failed get iframe content window`);
+    }
+
+    const api = new PlayerIframeApiAdapter(iframeWindow);
+    await new Promise<void>((resolve) => {
+      api.initPostMessageListener(resolve)
+    });
+    return api
   };
 };
