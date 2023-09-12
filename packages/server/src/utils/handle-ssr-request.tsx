@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import * as ReactDOMServer from 'react-dom/server';
-import isbot from 'isbot';
+import * as isbot from 'isbot';
 
 import { StaticRouter } from 'react-router-dom/server';
 import { ComponentType } from 'react';

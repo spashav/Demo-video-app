@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { awaitTime } from '../utils/await-time';
+import { awaitTime } from './await-time';
 
 const sources = [
   {

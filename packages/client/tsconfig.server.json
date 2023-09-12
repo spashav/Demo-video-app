@@ -5,5 +5,5 @@
     "target": "es2019",
     "types": ["node"]
   },
-  "include": ["src/main.server.tsx", "server.ts"]
+  "include": ["src/entry/server.ts"]
 }

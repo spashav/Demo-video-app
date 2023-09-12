@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@demo-video-app/player/*": ["packages/player/*"]
+      "@demo-video-app/player/*": ["packages/player/*"],
+      "@demo-video-app/client/*": ["packages/client/*"],
+      "@demo-video-app/server/*": ["packages/server/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
