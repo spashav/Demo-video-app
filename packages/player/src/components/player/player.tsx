@@ -1,31 +1,54 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import '../../../../../node_modules/video.js/dist/video-js.css';
 import { PlayerApi } from './player-api';
 
-interface InitOptions {
+interface VideoConfig {
   autoplay?: boolean;
-  sources: {
+  id: string;
+  source?: {
     src: string;
     type: string;
     poster: string;
-  }[];
+    id: string
+  };
 }
 
 export const Player: FC<{
-  options: InitOptions;
+  videoConfig: VideoConfig;
   overridePlayerApi?: PlayerApi;
-}> = (props) => {
-  const { options, overridePlayerApi } = props;
+}> = props => {
+  const { videoConfig, overridePlayerApi } = props;
   const videoRef = useRef<HTMLDivElement>(null);
   const [player] = useState(() => overridePlayerApi || new PlayerApi());
 
+  const [source, setSource] = useState<VideoConfig['source']>(videoConfig.source);
+
   useEffect(() => {
-    if (!videoRef.current) {
+    if (source && source.id === videoConfig.id) {
+      return
+    }
+    const fetchConfig = async () => {
+      const res = await fetch(`/api/player_config/${videoConfig.id}`);
+      const config = await res.json();
+      setSource(config);
+    };
+    fetchConfig();
+  }, [source, videoConfig.id]);
+
+  const initOptions = useMemo(
+    () => ({
+      sources: source ? [source] : [],
+    }),
+    [source]
+  );
+
+  useEffect(() => {
+    if (!videoRef.current || !initOptions.sources.length) {
       return;
     }
-    player.setSource(options, videoRef.current);
-  }, [options, videoRef]);
+    player.setSource(initOptions, videoRef.current);
+  }, [initOptions, videoRef]);
 
   useEffect(() => {
     return () => {
