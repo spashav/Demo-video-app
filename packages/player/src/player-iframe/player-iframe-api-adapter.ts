@@ -5,28 +5,11 @@ import {
   SubscriptionsMethods,
   PlayerApiMethods,
 } from '@demo-video-app/player/src/public-api';
-
-interface IframeInEventData<Method extends PlayerApiMethods> {
-  apiMethod: Method;
-  data: Method extends SubscriptionsMethods
-    ? undefined
-    : Parameters<PlayerPublicApi[Method]>;
-  apiCallKey: number;
-  source: 'iframe-player';
-}
-
-interface IframeOutEventData<Method extends PlayerApiMethods> {
-  apiMethod: Method;
-  result: Parameters<PlayerPublicApi[Method]>[0] extends (
-    ...data: infer InnerData
-  ) => void
-    ? InnerData extends never
-      ? undefined
-      : InnerData
-    : ReturnType<PlayerPublicApi[Method]>;
-  apiCallKey: number;
-  source: 'iframe-player';
-}
+import {
+  sendMessageToIframe,
+  IframeInEventData,
+  IframeOutEventData,
+} from '@demo-video-app/player/src/utils/iframe-messages';
 
 export class PlayerIframeApiAdapter implements PlayerPublicApi {
   constructor(private iframeWindow: WindowProxy) {}
@@ -36,14 +19,12 @@ export class PlayerIframeApiAdapter implements PlayerPublicApi {
       ...data: Parameters<PlayerPublicApi[SettersMethods]>
     ): Promise<ReturnType<PlayerPublicApi[SettersMethods]>> => {
       const apiCallKey = uniqueApiKey++;
-      const inData: IframeInEventData<SettersMethods> = {
+      sendMessageToIframe({
         apiMethod,
         data,
         apiCallKey,
-        source: 'iframe-player',
-      };
-      this.iframeWindow.postMessage(inData);
-
+        iframeWindow: this.iframeWindow,
+      });
       return new Promise((resolve) => {
         apiCallbacks[apiCallKey] = (data) => {
           resolve(data.result as any);

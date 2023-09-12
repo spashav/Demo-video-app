@@ -1,43 +1,17 @@
-import {
-  isSettersMethod,
-  PlayerApiMethods,
-  PlayerPublicApi,
-  SettersMethods,
-  SubscriptionsMethods,
-} from '@demo-video-app/player/src/public-api';
 import { PlayerApi } from '@demo-video-app/player/src/components/player/player-api';
+import {
+  proxyApiResultToParentWindow,
+  sendMessageToParent,
+} from '@demo-video-app/player/src/utils/iframe-messages';
 
-interface IframeInEventData<Method extends PlayerApiMethods> {
-  apiMethod: Method;
-  data: Method extends SubscriptionsMethods
-    ? undefined
-    : Parameters<PlayerPublicApi[Method]>;
-  apiCallKey: number;
-  source: 'iframe-player';
-}
-
-interface IframeOutEventData<Method extends PlayerApiMethods> {
-  apiMethod: Method;
-  result: Parameters<PlayerPublicApi[Method]>[0] extends (
-      ...data: infer InnerData
-    ) => void
-    ? InnerData extends never
-      ? undefined
-      : InnerData
-    : ReturnType<PlayerPublicApi[Method]>;
-  apiCallKey: number;
-  source: 'iframe-player';
-}
 export class PlayerApiInnerIframe extends PlayerApi {
-  initPostMessageListener = () => {
+  public initPostMessageListener = () => {
     const unsubscribeFromApiReady = this.onApiReady(() => {
-      const outData: IframeOutEventData<SubscriptionsMethods> = {
+      sendMessageToParent({
         result: undefined,
         apiCallKey: -1,
         apiMethod: 'onApiReady',
-        source: 'iframe-player',
-      };
-      window.parent.postMessage(outData);
+      });
       unsubscribeFromApiReady();
     });
 
@@ -54,31 +28,3 @@ export class PlayerApiInnerIframe extends PlayerApi {
     };
   };
 }
-
-const proxyApiResultToParentWindow = (
-  { apiMethod, apiCallKey, data }: IframeInEventData<PlayerApiMethods>,
-  playerApi: PlayerApi
-) => {
-  if (isSettersMethod(apiMethod)) {
-    const result = playerApi[apiMethod].apply(playerApi, data as []);
-
-    const outData: IframeOutEventData<SettersMethods> = {
-      result,
-      apiCallKey,
-      apiMethod,
-      source: 'iframe-player',
-    };
-    window.parent.postMessage(outData);
-  } else {
-    const api = playerApi[apiMethod];
-    api((state?: any) => {
-      const outData: IframeOutEventData<SubscriptionsMethods> = {
-        result: state as any,
-        apiCallKey,
-        apiMethod,
-        source: 'iframe-player',
-      };
-      window.parent.postMessage(outData);
-    });
-  }
-};
