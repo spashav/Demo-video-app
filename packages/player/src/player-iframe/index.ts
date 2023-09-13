@@ -3,7 +3,7 @@ import { PlayerIframeApiAdapter } from '@demo-video-app/player/src/player-iframe
 
 export const init = () => {
   const api = getPlayerPublicApi();
-  api.iframe.setSource = async ({
+  api.iframe.init = async ({
     id,
     container,
   }: {
@@ -18,7 +18,7 @@ export const init = () => {
       throw new Error(`No container found`);
     }
     const { width, height } = elem.getBoundingClientRect();
-    elem.innerHTML = `<iframe src="/player/1.1/${id}" width="${width}px" height="${height}px"/>`;
+    elem.innerHTML = `<iframe src="/player/1.1/${id}" width="${width}px" height="${height}px" style="box-sizing: border-box;border: 0;"/>`;
     const iframe = elem.querySelector('iframe');
     const iframeWindow = iframe?.contentWindow;
     if (!iframeWindow) {

@@ -38,7 +38,7 @@ export type PlayerIframeApi = {
 interface WindowWithPlayer {
   PLAYER: {
     iframe: {
-      setSource: (props: {
+      init: (props: {
         id: string;
         container: string;
       }) => Promise<PlayerIframeApi>;
