@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import '../../../../../node_modules/video.js/dist/video-js.css';
-import { PlayerApi } from './player-api';
+import { PlayerApi, InitOptions } from './player-api';
 
 interface VideoConfig {
   autoplay?: boolean;
@@ -36,9 +36,10 @@ export const Player: FC<{
     fetchConfig();
   }, [source, videoConfig.id]);
 
-  const initOptions = useMemo(
+  const initOptions = useMemo<InitOptions>(
     () => ({
       sources: source ? [source] : [],
+      autoplay: 'any',
     }),
     [source]
   );

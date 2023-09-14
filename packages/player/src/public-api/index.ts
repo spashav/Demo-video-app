@@ -1,9 +1,11 @@
 export type SubscriptionsMethods =
   | 'onApiReady'
+  | 'onContentImpression'
+  | 'onResourceIdle'
   | 'onPlayingStateChange'
   | 'onCurrentTimeChange';
-const settersMethods = ['play' , 'pause'] as const;
-export type SettersMethods = typeof settersMethods[number];
+const settersMethods = ['play', 'pause'] as const;
+export type SettersMethods = (typeof settersMethods)[number];
 export type PlayerApiMethods = SubscriptionsMethods | SettersMethods;
 
 export enum PlayerPlayingState {
@@ -24,6 +26,8 @@ export interface PlayerPublicApi {
   play: () => void;
   pause: () => void;
   // subscriptions
+  onContentImpression: (cb: (props: { isAutoplay: boolean }) => void) => void;
+  onResourceIdle: (cb: () => void) => void;
   onApiReady: (cb: () => void) => void;
   onPlayingStateChange: (cb: (state: PlayerPlayingState) => void) => void;
   onCurrentTimeChange: (cb: (state: { time: number }) => void) => void;

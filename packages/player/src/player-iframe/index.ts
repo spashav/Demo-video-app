@@ -27,8 +27,8 @@ export const init = () => {
 
     const api = new PlayerIframeApiAdapter(iframeWindow);
     await new Promise<void>((resolve) => {
-      api.initPostMessageListener(resolve)
+      api.initPostMessageListener(resolve);
     });
-    return api
+    return api;
   };
 };

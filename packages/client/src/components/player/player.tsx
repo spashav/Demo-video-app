@@ -2,11 +2,22 @@ import styles from './player.module.css';
 
 import { useEffect } from 'react';
 import cn from 'clsx';
-import { getPlayerPublicApi } from '@demo-video-app/player/src/public-api';
+import {
+  getPlayerPublicApi,
+  PlayerIframeApi,
+} from '@demo-video-app/player/src/public-api';
 
 const CONTAINER_ID = '#player';
 
-export function Player({ id, className }: { id: string; className: string }) {
+export function Player({
+  id,
+  className,
+  onApiLoad,
+}: {
+  id: string;
+  className: string;
+  onApiLoad: (api: PlayerIframeApi) => void;
+}) {
   useEffect(() => {
     if (!id) {
       return;
@@ -15,11 +26,7 @@ export function Player({ id, className }: { id: string; className: string }) {
       id,
       container: CONTAINER_ID,
     });
-    playerApiPromise.then((playerApi) => {
-      playerApi.onCurrentTimeChange((state) => {
-        console.log('onPlayingStateChange', state);
-      });
-    });
+    playerApiPromise.then(onApiLoad);
   }, [id]);
 
   return (

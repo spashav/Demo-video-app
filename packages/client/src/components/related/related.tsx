@@ -9,14 +9,14 @@ interface RelatedItem {
   id: string;
   cover: string;
 }
-export function Related({ id, className }: { id: string; className: string }) {
+export function Related({ id, className, onClick }: { id: string; className: string, onClick: () => void }) {
   const related = useApi<RelatedItem[]>({ apiUrl: `/related?id=${id}` });
 
   return (
     <div className={cn(className, styles.main)}>
       {related.response
         ? related.response.map(({ id, cover }) => (
-            <Card cover={cover} id={id} key={id} className={styles.card} />
+            <Card cover={cover} id={id} key={id} className={styles.card} onClick={onClick} />
           ))
         : null}
     </div>

@@ -63,6 +63,12 @@ export class PlayerIframeApiAdapter implements PlayerPublicApi {
   public onCurrentTimeChange = this.proxyApiSubscriptions(
     'onCurrentTimeChange'
   );
+  public onResourceIdle = this.proxyApiSubscriptions(
+    'onResourceIdle'
+  );
+  public onContentImpression = this.proxyApiSubscriptions(
+    'onContentImpression'
+  );
 
   public initPostMessageListener = (onApiReady: () => void) => {
     const handleMessage = (event: MessageEvent) => {
