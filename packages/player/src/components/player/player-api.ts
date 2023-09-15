@@ -38,16 +38,25 @@ export class PlayerApi implements PlayerPublicApi {
   private apiReady = eventEmitter();
   public onApiReady = this.apiReady.on;
 
+  private playerReady = eventEmitter();
+  public onPlayerReady = this.playerReady.on;
+
   private playingState = eventEmitter<[PlayerPlayingState]>();
   public onPlayingStateChange = this.playingState.on;
+
+  private duration = eventEmitter<[{ time: number }]>();
+  public onDurationChange = this.duration.on;
 
   private currentTime = eventEmitter<[{ time: number }]>();
   public onCurrentTimeChange = this.currentTime.on;
 
-  private isContentImpressionEmitted = false
+  private error = eventEmitter<[{ msg: string }]>();
+  public onError = this.error.on;
+
+  private isContentImpressionEmitted = false;
 
   public setSource = (options: InitOptions, videoRef: HTMLDivElement) => {
-    this.isContentImpressionEmitted = false
+    this.isContentImpressionEmitted = false;
     if (!this.videoJsRef) {
       const videoElement = document.createElement('video-js');
       videoElement.style.height = '100%';
@@ -63,8 +72,7 @@ export class PlayerApi implements PlayerPublicApi {
           ...options,
         },
         () => {
-          videojs.log('player is ready');
-          this.apiReady.emit();
+          this.playerReady.emit();
         }
       ));
       player.poster(options.sources[0].poster);
@@ -73,9 +81,16 @@ export class PlayerApi implements PlayerPublicApi {
           time: player.currentTime() || 0,
         });
       });
+      player.on('durationchange', () => {
+        this.duration.emit({
+          time: player.duration() || 0,
+        });
+      });
       player.on('canplaythrough', () => {
-        console.log('canplaythrough');
-        this.resourceIdle.emit()
+        this.resourceIdle.emit();
+      });
+      player.on('error', () => {
+        this.error.emit({ msg: 'Some player error' });
       });
       player.on('pause', () => {
         this.playingState.emit(PlayerPlayingState.PAUSE);
@@ -84,19 +99,16 @@ export class PlayerApi implements PlayerPublicApi {
         this.playingState.emit(PlayerPlayingState.PLAY);
       });
       player.on('playing', () => {
-        console.log('playing');
         if (this.isContentImpressionEmitted) {
-          return
+          return;
         }
-        this.isContentImpressionEmitted = true
-        this.contentImpression.emit({ isAutoplay: true })
-      });
-      player.on('waiting', () => {
-        console.log('waiting');
+        this.isContentImpressionEmitted = true;
+        this.contentImpression.emit({ isAutoplay: true });
       });
       player.on('ended', () => {
         this.playingState.emit(PlayerPlayingState.ENDED);
       });
+      this.apiReady.emit();
     } else {
       const player = this.videoJsRef;
 

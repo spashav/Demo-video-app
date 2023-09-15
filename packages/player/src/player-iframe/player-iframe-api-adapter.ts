@@ -55,17 +55,25 @@ export class PlayerIframeApiAdapter implements PlayerPublicApi {
 
   public play = this.proxyApiMethod('play');
   public pause = this.proxyApiMethod('pause');
+  public destroy = async () => {
+    Object.keys(subscriptionsCallbacks).forEach(
+      (key) => delete subscriptionsCallbacks[key]
+    );
+    Object.keys(apiCallbacks).forEach((key) => delete apiCallbacks[key]);
+  };
 
   public onApiReady = this.proxyApiSubscriptions('onApiReady');
+  public onError = this.proxyApiSubscriptions('onError');
   public onPlayingStateChange = this.proxyApiSubscriptions(
     'onPlayingStateChange'
   );
   public onCurrentTimeChange = this.proxyApiSubscriptions(
     'onCurrentTimeChange'
   );
-  public onResourceIdle = this.proxyApiSubscriptions(
-    'onResourceIdle'
+  public onDurationChange = this.proxyApiSubscriptions(
+    'onDurationChange'
   );
+  public onResourceIdle = this.proxyApiSubscriptions('onResourceIdle');
   public onContentImpression = this.proxyApiSubscriptions(
     'onContentImpression'
   );

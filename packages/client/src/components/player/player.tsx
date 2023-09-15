@@ -27,6 +27,9 @@ export function Player({
       container: CONTAINER_ID,
     });
     playerApiPromise.then(onApiLoad);
+    return () => {
+      playerApiPromise.then(api => api.destroy());
+    }
   }, [id]);
 
   return (

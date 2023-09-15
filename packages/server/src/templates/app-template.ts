@@ -12,6 +12,20 @@ export const appTemplate = () => `
     <link rel="stylesheet" href="main.css" />
   </head>
   <body>
+    <script>
+    (() => {
+      const onVisibilityChange = () => {
+         const visibilityState = document.visibilityState
+         if (visibilityState === 'hidden') {
+           document.removeEventListener('visibilitychange', onVisibilityChange)
+           window.isHiddenWhileLoad = true
+         }
+      }
+      window.isHiddenWhileLoad = false
+      document.addEventListener('visibilitychange', onVisibilityChange)
+      onVisibilityChange()
+    })()
+    </script>
     <div id="root"></div>
     <script src="runtime.js" type="module"></script>
     <script src="styles.js" type="module"></script>

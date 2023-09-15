@@ -3,6 +3,7 @@ import { PlayerIframeApiAdapter } from '@demo-video-app/player/src/player-iframe
 
 export const init = () => {
   const api = getPlayerPublicApi();
+  let unsubscribeFromPrevIframe: () => void
   api.iframe.init = async ({
     id,
     container,
@@ -17,6 +18,7 @@ export const init = () => {
     if (!elem) {
       throw new Error(`No container found`);
     }
+    unsubscribeFromPrevIframe?.()
     const { width, height } = elem.getBoundingClientRect();
     elem.innerHTML = `<iframe src="/player/1.1/${id}" width="${width}px" height="${height}px" style="box-sizing: border-box;border: 0;"/>`;
     const iframe = elem.querySelector('iframe');
@@ -27,7 +29,7 @@ export const init = () => {
 
     const api = new PlayerIframeApiAdapter(iframeWindow);
     await new Promise<void>((resolve) => {
-      api.initPostMessageListener(resolve);
+      unsubscribeFromPrevIframe = api.initPostMessageListener(resolve);
     });
     return api;
   };

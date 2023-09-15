@@ -1,7 +1,17 @@
 import { Router, Response } from 'express';
 import { awaitTime } from './await-time';
 
-const sources = [
+interface Source {
+  src: string
+  poster: string
+  type: string
+  cover: string
+  title: string
+  description: string
+  states: {progress: number; text: string}[]
+}
+
+const sources: Source[] = [
   {
     //src: 'https://storage.googleapis.com/shaka-demo-assets/bbb-dark-truths-hls/hls.m3u8',
     src: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/master.m3u8',
@@ -10,6 +20,16 @@ const sources = [
     cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
     title: 'Видео о зайце',
     description: 'Длинное описание видео о зайце',
+    states: [{
+      progress: 0,
+      text: 'Тестовое описание того, что происходит с зайцем от 0 до 33%'
+    },{
+      progress: 33,
+      text: 'Тестовое описание того, что происходит с зайцем от 33 до 66%'
+    },{
+      progress: 66,
+      text: 'Тестовое описание того, что происходит с зайцем от 66 до 100%'
+    }]
   },
   {
     //src: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
@@ -21,6 +41,16 @@ const sources = [
       'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
     title: 'Видео о роботах',
     description: 'Длинное описание видео о роботах',
+    states: [{
+      progress: 0,
+      text: 'Тестовое описание того, что происходит с роботами от 0 до 33%'
+    },{
+      progress: 33,
+      text: 'Тестовое описание того, что происходит с роботами от 33 до 66%'
+    },{
+      progress: 66,
+      text: 'Тестовое описание того, что происходит с роботами от 66 до 100%'
+    }]
   },
 ];
 
@@ -30,7 +60,6 @@ const send = <Data extends any>(res: Response, data: Data) => {
 
   res.end(JSON.stringify(data));
 };
-type Source = (typeof sources)[number];
 const getSource = <Keys extends keyof Source>(
   index: number,
   filter: Set<Keys>
@@ -81,7 +110,7 @@ export const initApiRouter = () => {
     .get('/watch/:id', async (req, res) => {
       await awaitTime(100);
       const { id } = req.params;
-      const filter = new Set(['description', 'title'] as const);
+      const filter = new Set(['description', 'title', 'states'] as const);
 
       send(res, {
         ...getSource(parseInt(id, 10), filter),

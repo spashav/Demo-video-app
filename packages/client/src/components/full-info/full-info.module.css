@@ -7,6 +7,9 @@
   margin: 0;
 }
 
-.description {
+.description,
+.textProgress,
+.title,
+.banner {
   padding: 10px;
 }

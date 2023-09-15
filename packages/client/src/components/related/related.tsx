@@ -9,7 +9,7 @@ interface RelatedItem {
   id: string;
   cover: string;
 }
-export function Related({ id, className, onClick }: { id: string; className: string, onClick: () => void }) {
+export function Related({ id, className, onClick }: { id: string; className: string, onClick: (id: string) => void }) {
   const related = useApi<RelatedItem[]>({ apiUrl: `/related?id=${id}` });
 
   return (

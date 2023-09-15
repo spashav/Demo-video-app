@@ -12,13 +12,13 @@ export function Card({
   id: string;
   cover: string;
   className: string;
-  onClick: () => void;
+  onClick: (id: string) => void;
 }) {
   return (
     <Link
       to={`/watch/${id}`}
       className={cn(styles.card, className)}
-      onClick={onClick}
+      onClick={() => onClick(id)}
     >
       <div className={styles.ratio}></div>
       <div
