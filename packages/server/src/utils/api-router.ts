@@ -1,14 +1,15 @@
-import { Router, Response } from 'express';
+import { Router } from 'express';
 import { awaitTime } from './await-time';
+import { sendJson } from './send';
 
 interface Source {
-  src: string
-  poster: string
-  type: string
-  cover: string
-  title: string
-  description: string
-  states: {progress: number; text: string}[]
+  src: string;
+  poster: string;
+  type: string;
+  cover: string;
+  title: string;
+  description: string;
+  states: { progress: number; text: string }[];
 }
 
 const sources: Source[] = [
@@ -20,16 +21,20 @@ const sources: Source[] = [
     cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
     title: 'Видео о зайце',
     description: 'Длинное описание видео о зайце',
-    states: [{
-      progress: 0,
-      text: 'Тестовое описание того, что происходит с зайцем от 0 до 33%'
-    },{
-      progress: 33,
-      text: 'Тестовое описание того, что происходит с зайцем от 33 до 66%'
-    },{
-      progress: 66,
-      text: 'Тестовое описание того, что происходит с зайцем от 66 до 100%'
-    }]
+    states: [
+      {
+        progress: 0,
+        text: 'Тестовое описание того, что происходит с зайцем от 0 до 33%',
+      },
+      {
+        progress: 33,
+        text: 'Тестовое описание того, что происходит с зайцем от 33 до 66%',
+      },
+      {
+        progress: 66,
+        text: 'Тестовое описание того, что происходит с зайцем от 66 до 100%',
+      },
+    ],
   },
   {
     //src: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
@@ -41,25 +46,23 @@ const sources: Source[] = [
       'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
     title: 'Видео о роботах',
     description: 'Длинное описание видео о роботах',
-    states: [{
-      progress: 0,
-      text: 'Тестовое описание того, что происходит с роботами от 0 до 33%'
-    },{
-      progress: 33,
-      text: 'Тестовое описание того, что происходит с роботами от 33 до 66%'
-    },{
-      progress: 66,
-      text: 'Тестовое описание того, что происходит с роботами от 66 до 100%'
-    }]
+    states: [
+      {
+        progress: 0,
+        text: 'Тестовое описание того, что происходит с роботами от 0 до 33%',
+      },
+      {
+        progress: 33,
+        text: 'Тестовое описание того, что происходит с роботами от 33 до 66%',
+      },
+      {
+        progress: 66,
+        text: 'Тестовое описание того, что происходит с роботами от 66 до 100%',
+      },
+    ],
   },
 ];
 
-const send = <Data extends any>(res: Response, data: Data) => {
-  res.status(200);
-  res.type('application/json');
-
-  res.end(JSON.stringify(data));
-};
 const getSource = <Keys extends keyof Source>(
   index: number,
   filter: Set<Keys>
@@ -73,13 +76,22 @@ const getSource = <Keys extends keyof Source>(
 
 export const initApiRouter = () => {
   const router = Router();
+  let playerVersion = '1';
 
   router
+    .get('/change-player-version/:version', async (req, res) => {
+      const { version } = req.params;
+      playerVersion = version;
+      sendJson(res, { status: 'ok' });
+    })
+    .get('/get-player-version', async (req, res) => {
+      sendJson(res, { version: playerVersion });
+    })
     .get('/feed', async (req, res) => {
       await awaitTime(1000);
       const filter = new Set(['cover'] as const);
 
-      send(
+      sendJson(
         res,
         Array(100)
           .fill(null)
@@ -94,7 +106,7 @@ export const initApiRouter = () => {
       const filter = new Set(['cover'] as const);
       const id = typeof req.query['id'] === 'string' ? req.query['id'] : '0';
 
-      send(
+      sendJson(
         res,
         Array(100)
           .fill(null)
@@ -112,7 +124,7 @@ export const initApiRouter = () => {
       const { id } = req.params;
       const filter = new Set(['description', 'title', 'states'] as const);
 
-      send(res, {
+      sendJson(res, {
         ...getSource(parseInt(id, 10), filter),
         id,
       });
@@ -122,7 +134,7 @@ export const initApiRouter = () => {
       const { id } = req.params;
       const filter = new Set(['src', 'poster', 'type'] as const);
 
-      send(res, {
+      sendJson(res, {
         ...getSource(parseInt(id, 10), filter),
         id,
       });

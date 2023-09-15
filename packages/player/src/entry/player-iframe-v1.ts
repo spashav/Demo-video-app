@@ -1,3 +1,3 @@
 import { init } from '../player-iframe';
 
-init();
+init({ playerVersion: 'v1' });

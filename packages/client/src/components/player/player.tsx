@@ -22,7 +22,7 @@ export function Player({
     if (!id) {
       return;
     }
-    const playerApiPromise = getPlayerPublicApi().iframe.init({
+    const playerApiPromise = getPlayerPublicApi().init({
       id,
       container: CONTAINER_ID,
     });

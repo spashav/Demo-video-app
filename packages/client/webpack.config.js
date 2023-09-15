@@ -4,13 +4,13 @@ const { withReact } = require('@nx/react');
 
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), withReact(), (config) => {
-  // Update the webpack config as needed here.
-  // e.g. `config.plugins.push(new MyPlugin())`
   if (config.target === 'web') {
-    config.entry.loader = path.resolve(__dirname, '../player/src/entry/loader.ts')
     config.entry.player = path.resolve(__dirname, '../player/src/entry/player.tsx')
-    config.entry.player_iframe = path.resolve(__dirname, '../player/src/entry/player-iframe.ts')
-    config.entry.player_skin = path.resolve(__dirname, '../player/src/entry/player-skin.ts')
+
+    // Версии api плеера при подключении через iframe
+    config.entry.player_iframe_v1 = path.resolve(__dirname, '../player/src/entry/player-iframe-v1.ts')
+    config.entry.player_iframe_v2 = path.resolve(__dirname, '../player/src/entry/player-iframe-v2.ts')
+    config.entry.player_iframe_v3 = path.resolve(__dirname, '../player/src/entry/player-iframe-v3.ts')
   }
   return config;
 });

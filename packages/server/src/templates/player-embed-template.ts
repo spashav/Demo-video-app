@@ -14,7 +14,6 @@ export const playerEmbedTemplate = () => `
     <div id="root"></div>
     <script src="runtime.js" type="module"></script>
     <script src="vendor.js" type="module"></script>
-    <script src="loader.js" type="module"></script>
     <script src="player.js" type="module"></script>
   </body>
 </html>

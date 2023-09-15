@@ -44,13 +44,16 @@ export type PlayerIframeApi = {
   ) => Promise<ReturnType<PlayerPublicApi[Method]>>;
 };
 
+type InitPlayer = (props: {
+  id: string;
+  container: string;
+}) => Promise<PlayerIframeApi>;
+
 interface WindowWithPlayer {
   PLAYER: {
+    init: InitPlayer;
     iframe: {
-      init: (props: {
-        id: string;
-        container: string;
-      }) => Promise<PlayerIframeApi>;
+      init: InitPlayer;
     };
   };
 }

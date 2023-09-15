@@ -30,7 +30,7 @@ export const appTemplate = () => `
     <script src="runtime.js" type="module"></script>
     <script src="styles.js" type="module"></script>
     <script src="vendor.js" type="module"></script>
-    <script src="player_iframe.js" type="module"></script>
+    <script src="player_loader.js" type="module"></script>
     <script src="main.js" type="module"></script>
   </body>
 </html>

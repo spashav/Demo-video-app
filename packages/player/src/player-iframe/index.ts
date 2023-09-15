@@ -1,9 +1,9 @@
 import { getPlayerPublicApi } from '../public-api';
 import { PlayerIframeApiAdapter } from '@demo-video-app/player/src/player-iframe/player-iframe-api-adapter';
 
-export const init = () => {
+export const init = ({ playerVersion }: { playerVersion: string }) => {
   const api = getPlayerPublicApi();
-  let unsubscribeFromPrevIframe: () => void
+  let unsubscribeFromPrevIframe: () => void;
   api.iframe.init = async ({
     id,
     container,
@@ -18,9 +18,9 @@ export const init = () => {
     if (!elem) {
       throw new Error(`No container found`);
     }
-    unsubscribeFromPrevIframe?.()
+    unsubscribeFromPrevIframe?.();
     const { width, height } = elem.getBoundingClientRect();
-    elem.innerHTML = `<iframe src="/player/1.1/${id}" width="${width}px" height="${height}px" style="box-sizing: border-box;border: 0;"/>`;
+    elem.innerHTML = `<iframe src="/player/${playerVersion}/${id}" width="${width}px" height="${height}px" style="box-sizing: border-box;border: 0;"/>`;
     const iframe = elem.querySelector('iframe');
     const iframeWindow = iframe?.contentWindow;
     if (!iframeWindow) {
