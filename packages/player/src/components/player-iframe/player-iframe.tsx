@@ -1,18 +1,20 @@
-import { useParams } from 'react-router-dom';
 import { Player } from '../player/player';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect } from 'react';
 import { PlayerApiInnerIframe } from './player-iframe-api';
 
-export function PlayerIframe() {
-  const { id, version } = useParams();
-
-  const [player] = useState(() => new PlayerApiInnerIframe());
+export function PlayerIframe({
+  id,
+  playerApi,
+}: {
+  id: string;
+  playerApi: PlayerApiInnerIframe;
+}) {
   useEffect(() => {
-    return player.initPostMessageListener();
-  }, []);
+    return playerApi.initPostMessageListener();
+  }, [playerApi]);
 
-  if (!id || !version) {
+  if (!id) {
     return <div>Empty id or version in url</div>;
   }
-  return <Player overridePlayerApi={player} videoConfig={{ id }} />;
+  return <Player overridePlayerApi={playerApi} videoConfig={{ id }} />;
 }

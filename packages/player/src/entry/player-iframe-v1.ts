@@ -1,3 +1,3 @@
-import { init } from '../player-iframe';
+import { initPublicApi } from '../player-iframe';
 
-init({ playerVersion: 'v1' });
+initPublicApi({ playerVersion: '1' });

@@ -13,7 +13,7 @@ export function TextProgress({
   states: { progress: number; text: string }[];
   className: string;
 }) {
-  const currentProgress = (100 * time) / duration;
+  const currentProgress = duration ? (100 * time) / duration : 0;
   const state = _.find(states, (_, index) => {
     const nextState = states[index + 1];
     if (!nextState || nextState.progress > currentProgress) {

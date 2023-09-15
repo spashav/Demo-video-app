@@ -1,21 +1,7 @@
 import videojs from 'video.js';
 import VideoJsPlayerApi from 'video.js/dist/types/player';
 import { PlayerPlayingState, PlayerPublicApi } from '../../public-api';
-
-const eventEmitter = <Params extends Array<unknown> = []>() => {
-  let callbacks: Array<(...params: Params) => void> = [];
-  return {
-    on: (cb: (typeof callbacks)[number]) => {
-      callbacks.push(cb);
-      return () => {
-        callbacks = callbacks.filter((savedCb) => savedCb !== cb);
-      };
-    },
-    emit: (...param: Params) => {
-      [...callbacks].forEach((cb) => cb(...param));
-    },
-  };
-};
+import { eventEmitter } from '../../utils/event-emitter';
 
 export interface InitOptions {
   autoplay?: boolean | 'play' | 'muted' | 'any';

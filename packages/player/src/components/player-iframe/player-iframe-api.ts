@@ -1,8 +1,8 @@
-import { PlayerApi } from '@demo-video-app/player/src/components/player/player-api';
+import { PlayerApi } from '../player/player-api';
 import {
   proxyApiResultToParentWindow,
   sendMessageToParent,
-} from '@demo-video-app/player/src/utils/iframe-messages';
+} from '../../utils/iframe-messages';
 
 export class PlayerApiInnerIframe extends PlayerApi {
   public initPostMessageListener = () => {

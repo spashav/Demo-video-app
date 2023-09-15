@@ -5,11 +5,11 @@ import * as isbot from 'isbot';
 import { StaticRouter } from 'react-router-dom/server';
 import { ComponentType } from 'react';
 
-export function handleSsrRequest(template: () => string, Comp: ComponentType) {
+export function handleSsrRequest(template: (req: Request) => string, Comp: ComponentType) {
   return function render(req: Request, res: Response) {
     let didError = false;
 
-    const [htmlStart, htmlEnd] = template().split(`<div id="root"></div>`);
+    const [htmlStart, htmlEnd] = template(req).split(`<div id="root"></div>`);
 
     // For bots (e.g. search engines), the content will not be streamed but render all at once.
     // For users, content should be streamed to the user as they are ready.

@@ -44,16 +44,19 @@ export type PlayerIframeApi = {
   ) => Promise<ReturnType<PlayerPublicApi[Method]>>;
 };
 
-type InitPlayer = (props: {
+type InitPlayer<Api extends PlayerIframeApi | PlayerPublicApi> = (props: {
   id: string;
   container: string;
-}) => Promise<PlayerIframeApi>;
+}) => Promise<Api>;
 
 interface WindowWithPlayer {
   PLAYER: {
-    init: InitPlayer;
+    init: InitPlayer<PlayerIframeApi>;
+    inner: {
+      init: InitPlayer<PlayerPublicApi>;
+    };
     iframe: {
-      init: InitPlayer;
+      init: InitPlayer<PlayerIframeApi>;
     };
   };
 }
@@ -61,6 +64,7 @@ export const getPlayerPublicApi = () => {
   const windowWithPublicApi = window as unknown as WindowWithPlayer;
   windowWithPublicApi.PLAYER = windowWithPublicApi.PLAYER || {};
   windowWithPublicApi.PLAYER.iframe = windowWithPublicApi.PLAYER.iframe || {};
+  windowWithPublicApi.PLAYER.inner = windowWithPublicApi.PLAYER.inner || {};
 
   return windowWithPublicApi.PLAYER;
 };
