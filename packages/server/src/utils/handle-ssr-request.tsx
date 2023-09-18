@@ -1,11 +1,14 @@
 import type { Request, Response } from 'express';
 import * as ReactDOMServer from 'react-dom/server';
-import * as isbot from 'isbot';
+import isbot from 'isbot';
 
 import { StaticRouter } from 'react-router-dom/server';
 import { ComponentType } from 'react';
 
-export function handleSsrRequest(template: (req: Request) => string, Comp: ComponentType) {
+export function handleSsrRequest(
+  template: (req: Request) => string,
+  Comp: ComponentType
+) {
   return function render(req: Request, res: Response) {
     let didError = false;
 

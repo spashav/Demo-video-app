@@ -9,7 +9,7 @@ import { pageLib } from '../../utils/pages';
 pageLib.startPage();
 
 const hardWork = (count: number) => {
-  const a = performance.now()
+  return
   Array(count).fill(0).map((_, index) => {
     return Math.cos(index) * Math.sin(index)
   })

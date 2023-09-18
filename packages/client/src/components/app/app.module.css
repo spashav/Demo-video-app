@@ -2,5 +2,24 @@ html,body {
   padding: 0;
   margin: 0;
 }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-overflow-style: scrollbar;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: auto;
+  font-smooth: always;
+}
+
+body {
+  font-family: "OKKO Sans Regular", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 1.5;
+  position: relative;
+  background-image: url("../../assets/bg.png");
+}
+
 .app {
 }

@@ -3,3 +3,7 @@ declare module '*.css' {
 
   export default classes
 }
+
+declare module '*.svg' {
+  export const ReactComponent: React.ElementType
+}

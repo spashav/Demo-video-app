@@ -5,9 +5,9 @@ export const appTemplate = () => `
     <meta charset="utf-8" />
     <title>Client</title>
     <base href="/" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="vendor.css" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="main.css" />
   </head>
