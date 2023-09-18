@@ -14,6 +14,8 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     config.entry.player_iframe_v1 = path.resolve(__dirname, '../player/src/entry/player-iframe-v1.ts')
     config.entry.player_iframe_v2 = path.resolve(__dirname, '../player/src/entry/player-iframe-v2.ts')
     config.entry.player_iframe_v3 = path.resolve(__dirname, '../player/src/entry/player-iframe-v3.ts')
+  } else  {
+    config.externals = []
   }
   return config;
 });

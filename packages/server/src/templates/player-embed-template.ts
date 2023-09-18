@@ -32,10 +32,10 @@ export const playerEmbedTemplate = (req: Request) => {
       </head>
       <body>
         <div id="root"></div>
-        <script src="runtime.js"></script>
-        <script src="vendor.js"></script>
-        <script src="player_${playerVersion}.js"></script>
-        <script>
+        <script src="runtime.js" type="module"></script>
+        <script src="vendor.js" type="module"></script>
+        <script src="player_${playerVersion}.js" type="module"></script>
+        <script type="module">
           window.PLAYER.inner.init({
             container: 'root',
             id: "${contentId}"

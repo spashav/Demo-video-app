@@ -10,6 +10,8 @@ interface Source {
   title: string;
   description: string;
   states: { progress: number; text: string }[];
+  duration: number
+  genre: string
 }
 
 const sources: Source[] = [
@@ -35,6 +37,8 @@ const sources: Source[] = [
         text: 'Тестовое описание того, что происходит с зайцем от 66 до 100%',
       },
     ],
+    duration: 3453454,
+    genre: 'Кулинария',
   },
   {
     //src: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
@@ -60,6 +64,8 @@ const sources: Source[] = [
         text: 'Тестовое описание того, что происходит с роботами от 66 до 100%',
       },
     ],
+    duration: 12312123,
+    genre: 'Строительство',
   },
 ];
 
@@ -89,7 +95,7 @@ export const initApiRouter = () => {
     })
     .get('/feed', async (req, res) => {
       await awaitTime(1000);
-      const filter = new Set(['cover'] as const);
+      const filter = new Set(['cover' , 'title', 'duration', 'genre'] as const);
 
       sendJson(
         res,

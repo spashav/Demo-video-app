@@ -1,7 +1,116 @@
 .main {
+
+}
+
+.left {
+  margin: 40px;
+  display: flex;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  align-items: center;
+}
+
+.right {
+  position: fixed;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  right: 0;
+}
+
+.feed {
   display: grid;
-  grid-template-columns: 1fr;
   grid-row-gap: 10px;
-  max-width: 800px;
-  margin: 0 auto;
+  margin: 0 175px 0 397px;
+}
+
+.logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 44px;
+  letter-spacing: 0em;
+  text-decoration: none;
+  color: #000;
+}
+
+.logo:before {
+  width: 41px;
+  height: 33px;
+  border-radius: 12px 0 0 12px;
+  background: linear-gradient(121.48deg, #FF0000 9.22%, #6100FF 104.89%);
+  content: '';
+  display: inline-block;
+  margin-right: 10px;
+}
+.nav {
+  padding: 0;
+  margin: 0;
+}
+.navItem {
+  list-style-type: none;
+  padding: 12px 16px 12px 16px;
+  border-radius: 8px;
+}
+.navItem + .navItem {
+  margin-top: 32px;
+}
+.navItem a {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 25px;
+  letter-spacing: 0.025em;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #797979;
+}
+.isActive.navItem a,
+.navItem a:hover {
+  color: #000;
+}
+.navIcon {
+  margin-right: 12px;
+}
+.addVideo {
+  background: linear-gradient(121.48deg, #FF0000 9.22%, #6100FF 104.89%);
+  width: 57px;
+  height: 57px;
+  border-radius: 500px;
+  position: absolute;
+  top: 40px;
+  right: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrows {
+
+}
+
+.prevArrow,
+.nextArrow {
+  width: 72px;
+  height: 72px;
+  border-radius: 500px;
+  background: #F2F2F2;
+  display: flex;
+  justify-content: center;
+  margin-right: 51px;
+  cursor: pointer;;
+}
+.prevArrow:hover,
+.nextArrow:hover {
+  background: #d9d9d9;
+}
+
+.nextArrow {
+  margin-top: 65px;
 }
