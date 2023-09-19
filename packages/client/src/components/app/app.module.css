@@ -22,4 +22,47 @@ body {
 }
 
 .app {
+  position: relative;;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 40px 40px 0;
+  display: flex;
+  justify-content: space-between;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 44px;
+  letter-spacing: 0em;
+  text-decoration: none;
+  color: #000;
+}
+
+.logo:before {
+  width: 41px;
+  height: 33px;
+  border-radius: 12px 0 0 12px;
+  background: linear-gradient(121.48deg, #FF0000 9.22%, #6100FF 104.89%);
+  content: '';
+  display: inline-block;
+  margin-right: 10px;
+}
+.addVideo {
+  background: linear-gradient(121.48deg, #FF0000 9.22%, #6100FF 104.89%);
+  border-radius: 500px;
+}
+.menuIcon,
+.addVideo {
+  width: 57px;
+  height: 57px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

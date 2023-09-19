@@ -8,9 +8,8 @@ import { TextProgress } from '../text-progress/text-progress';
 
 interface FullInfo {
   id: string;
-  title: string;
   description: string;
-  states: { progress: number; text: string }[];
+  states: { progress: number; text: string; cover: string }[];
 }
 
 interface FullInfoProps {
@@ -32,20 +31,22 @@ export function FullInfo({
   if (!fullInfo.response) {
     return null;
   }
+
   return (
     <div className={cn(styles.fullInfo, className)}>
-      <h1 className={styles.title}>{fullInfo.response.title}</h1>
-      <div className={styles.description}>{fullInfo.response.description}</div>
-      <Banner
-        isPaused={playingState === PlayerPlayingState.PAUSE}
-        className={styles.banner}
-      />
       <TextProgress
+        contentId={id}
         className={styles.textProgress}
         duration={duration}
         time={currentTime}
         states={fullInfo.response.states}
       />
+      <Banner
+        isPaused={playingState === PlayerPlayingState.PAUSE}
+        className={styles.banner}
+      />
+      <div className={styles.descriptionHeader}>Описание ролика:</div>
+      <div className={styles.description}>{fullInfo.response.description}</div>
     </div>
   );
 }

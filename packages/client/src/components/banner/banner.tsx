@@ -20,5 +20,9 @@ export function Banner({
     return null;
   }
 
-  return <div className={cn(styles.banner, className)}>Классный баннер</div>;
+  return (
+    <div
+      className={cn(styles.banner, className)}
+    ></div>
+  );
 }

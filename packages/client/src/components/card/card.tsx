@@ -8,10 +8,12 @@ export function Card({
   cover,
   className,
   onClick,
+  ratio,
 }: {
   id: string;
   cover: string;
   className: string;
+  ratio: number;
   onClick: (id: string) => void;
 }) {
   return (
@@ -20,7 +22,10 @@ export function Card({
       className={cn(styles.card, className)}
       onClick={() => onClick(id)}
     >
-      <div className={styles.ratio}></div>
+      <div
+        className={styles.ratio}
+        style={{ paddingBottom: `${ratio * 100}%` }}
+      ></div>
       <div
         className={styles.cover}
         style={{ backgroundImage: `url("${cover}")` }}

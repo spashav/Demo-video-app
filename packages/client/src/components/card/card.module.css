@@ -1,6 +1,5 @@
 .card {
   position: relative;
-  border-radius: 24px
 }
 .cover {
   position: absolute;
@@ -12,6 +11,5 @@
   border-radius: inherit;
 }
 .ratio {
-  padding-bottom: 56.25%;
   position: relative;
 }
