@@ -1,6 +1,21 @@
-.swiper {
+.swiper,
+.fakeSwiper {
   height: 100vh;
   width: 100%;
+}
+.fakeSwiper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+.restFakeCards {
+  position: relative;
+}
+.restFakeCards .card {
+  position: absolute;
+  width: 100%;
+  margin-top: 40px;
 }
 .card {
   border-radius: 24px

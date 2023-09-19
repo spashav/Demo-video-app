@@ -16,6 +16,9 @@
   font-weight: 500;
   line-height: 28px;
 }
+.fakeDescriptionLine {
+  margin-top: 8px;
+}
 .banner {
   margin-bottom: 24px;
 }

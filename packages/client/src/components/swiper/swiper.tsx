@@ -11,11 +11,14 @@ import { Card } from '../card/card';
 import { Swiper as SwiperClass } from 'swiper/types';
 import { ReactComponent as OpenVideoIcon } from '../../assets/open-video.svg';
 import { formatDuration } from '../../utils/format-duration';
+import { useFlags } from '../../utils/use-flags';
+import { Fake } from '../fake/fake';
 
 export function Swiper({
   onClick,
   onSwiper,
   items,
+  isLoading,
 }: {
   onClick: (id: string) => void;
   onSwiper: (api: SwiperClass) => void;
@@ -26,7 +29,9 @@ export function Swiper({
     duration: number;
     genre: string;
   }[];
+  isLoading: boolean;
 }) {
+  const { useFake } = useFlags();
   const [active, setActive] = useState(0);
   const handleSwiperApiInit = useCallback(
     (api: SwiperClass) => {
@@ -35,6 +40,33 @@ export function Swiper({
     },
     [onSwiper]
   );
+
+  if (isLoading && !useFake) {
+    return null;
+  }
+  if (isLoading && useFake) {
+    return (
+      <div className={styles.fakeSwiper}>
+        <Fake
+          ratio={0.5022}
+          className={styles.card}
+          borderRadius={24}
+        />
+        <div className={styles.restFakeCards}>
+          <Fake
+            ratio={0.5022}
+            className={styles.card}
+            borderRadius={24}
+          />
+          <Fake
+            ratio={0.5022}
+            className={styles.card}
+            borderRadius={24}
+          />
+        </div>
+      </div>
+    );
+  }
   return (
     <BaseSwiper
       onSwiper={handleSwiperApiInit}
@@ -58,6 +90,7 @@ export function Swiper({
               id={id}
               className={styles.card}
               onClick={onClick}
+              withPreload={useFake}
             />
             {isActive && (
               <>

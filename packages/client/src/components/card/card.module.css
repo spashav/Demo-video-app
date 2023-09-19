@@ -1,5 +1,17 @@
 .card {
+  display: block;
   position: relative;
+}
+.card.withPreload {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.05) 0%,
+    #ffffff 0.01%,
+    #c2c2c2 67.19%,
+    #dedede 100%
+  ),
+  linear-gradient(0deg, #c6c6c6, #c6c6c6);
+  box-shadow: inset 0 0 0 1px #C6C6C6;
 }
 .cover {
   position: absolute;
@@ -8,7 +20,11 @@
   right: 0;
   bottom: 0;
   background-size: cover;
+  background-position: center;
   border-radius: inherit;
+}
+.cover.isFake {
+  visibility: hidden;
 }
 .ratio {
   position: relative;
