@@ -1,8 +1,7 @@
 .watch {
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 129px 40px 40px;
   display: grid;
-  grid-template-columns: auto 200px;
+  grid-template-columns: auto 266px;
   grid-column-gap: 30px;
 }
 
@@ -16,4 +15,5 @@
 }
 
 .description {
+  margin-top: 20px;
 }

@@ -1,6 +1,8 @@
+import '../../../../../node_modules/video.js/dist/video-js.css';
+import './player.css';
+
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import '../../../../../node_modules/video.js/dist/video-js.css';
 import { PlayerApi, InitOptions } from './player-api';
 
 interface VideoConfig {

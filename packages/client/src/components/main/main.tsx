@@ -12,7 +12,6 @@ import { ReactComponent as Icon1 } from '../../assets/nav-1.svg';
 import { ReactComponent as Icon2 } from '../../assets/nav-2.svg';
 import { ReactComponent as Icon3 } from '../../assets/nav-3.svg';
 import { ReactComponent as Icon4 } from '../../assets/nav-4.svg';
-import { ReactComponent as PlusIcon } from '../../assets/plus.svg';
 import { ReactComponent as NextArrowIcon } from '../../assets/next-arrow.svg';
 import { ReactComponent as PrevArrowIcon } from '../../assets/prev-arrow.svg';
 import { Swiper } from '@demo-video-app/client/src/components/swiper/swiper';
@@ -42,7 +41,6 @@ export function Main() {
     <div className={styles.main}>
       <div className={styles.left}>
         <div className={styles.leftWrap}>
-          <Link to="/" className={styles.logo}>Видеосервис</Link>
           <ul className={styles.nav}>
             <li className={cn(styles.navItem, styles.isActive)}>
               <Link to="/">
@@ -80,9 +78,6 @@ export function Main() {
         ) : null}
       </div>
       <div className={styles.right}>
-        <div className={styles.addVideo}>
-          <PlusIcon />
-        </div>
         <div className={styles.arrows}>
           <div className={styles.prevArrow} onClick={() => handleArrowsClick('prev')}>
             <PrevArrowIcon style={{ marginTop: 27 }} />

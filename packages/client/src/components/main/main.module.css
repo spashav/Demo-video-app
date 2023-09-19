@@ -26,29 +26,6 @@
   margin: 0 175px 0 397px;
 }
 
-.logo {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  font-size: 36px;
-  font-weight: 900;
-  line-height: 44px;
-  letter-spacing: 0em;
-  text-decoration: none;
-  color: #000;
-}
-
-.logo:before {
-  width: 41px;
-  height: 33px;
-  border-radius: 12px 0 0 12px;
-  background: linear-gradient(121.48deg, #FF0000 9.22%, #6100FF 104.89%);
-  content: '';
-  display: inline-block;
-  margin-right: 10px;
-}
 .nav {
   padding: 0;
   margin: 0;
@@ -77,18 +54,6 @@
 }
 .navIcon {
   margin-right: 12px;
-}
-.addVideo {
-  background: linear-gradient(121.48deg, #FF0000 9.22%, #6100FF 104.89%);
-  width: 57px;
-  height: 57px;
-  border-radius: 500px;
-  position: absolute;
-  top: 40px;
-  right: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .arrows {

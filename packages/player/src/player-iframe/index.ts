@@ -20,7 +20,7 @@ export const initPublicApi = ({ playerVersion }: { playerVersion: string }) => {
     }
     unsubscribeFromPrevIframe?.();
     const { width, height } = elem.getBoundingClientRect();
-    elem.innerHTML = `<iframe src="/player/v${playerVersion}/${id}" width="${width}px" height="${height}px" style="box-sizing: border-box;border: 0;"/>`;
+    elem.innerHTML = `<iframe src="/player/v${playerVersion}/${id}" width="${width}px" height="${height}px" style="box-sizing:border-box;border:0;border-radius:24px;"/>`;
     const iframe = elem.querySelector('iframe');
     const iframeWindow = iframe?.contentWindow;
     if (!iframeWindow) {

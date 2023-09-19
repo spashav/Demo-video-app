@@ -1,3 +1,65 @@
 .textProgress {
+  position: relative;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  column-gap: 24px;
+  grid-auto-flow:column;
+  overflow:auto;
+  position: relative;
+  z-index: 1;
+}
+.progress {
+  position: absolute;
+  overflow: hidden;
+  bottom: 34px;
+  right: 0;
+  left: 0;
+}
+.timeLine {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background-image: linear-gradient(121.48deg, #FF0000 9.22%, #6100FF 104.89%);
+  background-repeat: no-repeat;
+}
+.backLine {
+  position: absolute;
+  top: 1px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, #868686 50%, transparent 50%);
+  background-size: 20px 2px;
+}
+.item {
+  min-width: 0;
+}
+.itemCover {
+  border-radius: 8px;
+}
+.itemTime {
+  margin-top: 10px;
+  background: #F0F0F0;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 17px;
+  letter-spacing: 0em;
+  padding: 2px 8px 2px 8px;
+  width: fit-content;
+}
+.itemText {
+  margin-top: 8px;
 
+}
+.itemTextInner {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 17px;
+  letter-spacing: 0em;
+  color: #676767;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

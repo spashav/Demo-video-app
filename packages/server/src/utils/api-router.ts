@@ -9,7 +9,7 @@ interface Source {
   cover: string;
   title: string;
   description: string;
-  states: { progress: number; text: string }[];
+  states: { progress: number; text: string; cover: string }[];
   duration: number
   genre: string
 }
@@ -26,18 +26,46 @@ const sources: Source[] = [
     states: [
       {
         progress: 0,
-        text: 'Тестовое описание того, что происходит с зайцем от 0 до 33%',
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+        text: 'Заяц от 0 до 12.5%',
       },
       {
-        progress: 33,
-        text: 'Тестовое описание того, что происходит с зайцем от 33 до 66%',
+        progress: 12.5,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+        text: 'Заяц от 12.5% до 25%',
       },
       {
-        progress: 66,
-        text: 'Тестовое описание того, что происходит с зайцем от 66 до 100%',
+        progress: 25,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+        text: 'Заяц от 25% до 37.5%',
+      },
+      {
+        progress: 37.5,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+        text: 'Заяц от 37.5% до 50%',
+      },
+      {
+        progress: 50,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+        text: 'Заяц от 50% до 62.5%',
+      },
+      {
+        progress: 62.5,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+        text: 'Заяц от 62.5% до 75%',
+      },
+      {
+        progress: 75,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+        text: 'Заяц от 75% до 87.5%',
+      },
+      {
+        progress: 87.5,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+        text: 'Заяц от 87.5% до 100%',
       },
     ],
-    duration: 3453454,
+    duration: 635 * 1e3,
     genre: 'Кулинария',
   },
   {
@@ -53,18 +81,21 @@ const sources: Source[] = [
     states: [
       {
         progress: 0,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
         text: 'Тестовое описание того, что происходит с роботами от 0 до 33%',
       },
       {
         progress: 33,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
         text: 'Тестовое описание того, что происходит с роботами от 33 до 66%',
       },
       {
         progress: 66,
+        cover: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
         text: 'Тестовое описание того, что происходит с роботами от 66 до 100%',
       },
     ],
-    duration: 12312123,
+    duration: 734 * 1e3,
     genre: 'Строительство',
   },
 ];
