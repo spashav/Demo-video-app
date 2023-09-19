@@ -43,16 +43,21 @@ export function TextProgress({
                 onClick={() => {}}
               />
               <div className={styles.itemTime}>
-                {formatDuration(duration * progress)}
+                {duration === 0 ? '' : formatDuration(duration * progress)}
               </div>
-              <div className={styles.itemText}><div className={styles.itemTextInner}>{text}</div></div>
+              <div className={styles.itemText}>
+                <div className={styles.itemTextInner}>{text}</div>
+              </div>
             </div>
           );
         })}
       </div>
       <div className={styles.progress}>
         <div className={styles.backLine} />
-        <div className={styles.timeLine} style={{backgroundSize: `${currentProgress}% 4px`}} />
+        <div
+          className={styles.timeLine}
+          style={{ backgroundSize: `${currentProgress}% 4px` }}
+        />
       </div>
     </div>
   );
