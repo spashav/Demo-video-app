@@ -4,6 +4,7 @@ import isbot from 'isbot';
 
 import { StaticRouter } from 'react-router-dom/server';
 import { ComponentType } from 'react';
+import { FlagsContextProvider } from '@demo-video-app/client/src/utils/use-flags';
 
 export function handleSsrRequest(
   template: (req: Request) => string,
@@ -22,7 +23,9 @@ export function handleSsrRequest(
 
     const stream = ReactDOMServer.renderToPipeableStream(
       <StaticRouter location={req.originalUrl}>
-        <Comp />
+        <FlagsContextProvider req={req}>
+          <Comp />
+        </FlagsContextProvider>
       </StaticRouter>,
       {
         [callbackName]() {
