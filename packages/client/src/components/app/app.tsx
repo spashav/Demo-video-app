@@ -1,7 +1,7 @@
 import styles from './app.module.css';
 
 import { useEffect } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes, useSearchParams } from 'react-router-dom';
 import { Main } from '../main/main';
 import { Watch } from '../watch/watch';
 import { pageLib } from '../../utils/pages';
@@ -26,6 +26,7 @@ if (typeof window !== 'undefined') {
 }
 
 export function App() {
+  const [searchParams] = useSearchParams();
   useEffect(() => {
     addEventListener('popstate', () => {
       pageLib.startPage();
@@ -34,7 +35,7 @@ export function App() {
   return (
     <div className={styles.app}>
       <div className={styles.header}>
-        <Link to="/" className={styles.logo}>
+        <Link to={`/?${searchParams.toString()}`} className={styles.logo}>
           Видеосервис
         </Link>
         <Routes>

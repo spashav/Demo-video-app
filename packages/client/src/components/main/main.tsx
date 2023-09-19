@@ -1,7 +1,7 @@
 import styles from './main.module.css';
 
 import { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import cn from 'clsx';
 import { Swiper as SwiperClass } from 'swiper/types';
 import { useApi } from '../../utils/use-api';
@@ -20,10 +20,12 @@ interface FeedItem {
   id: string;
   cover: string;
   title: string;
-  genre: string
-  duration: number
+  genre: string;
+  duration: number;
 }
 export function Main() {
+  const [searchParams] = useSearchParams();
+  const linkToMain = `/?${searchParams.toString()}`
   const related = useApi<FeedItem[]>({ apiUrl: `/feed` });
   const [swiperApi, setSwiperApi] = useState<SwiperClass>();
   const handleItemClick = useCallback((id: string) => {
@@ -43,25 +45,25 @@ export function Main() {
         <div className={styles.leftWrap}>
           <ul className={styles.nav}>
             <li className={cn(styles.navItem, styles.isActive)}>
-              <Link to="/">
+              <Link to={linkToMain}>
                 <Icon1 className={styles.navIcon} />
                 Главная
               </Link>
             </li>
             <li className={styles.navItem}>
-              <Link to="/">
+              <Link to={linkToMain}>
                 <Icon2 className={styles.navIcon} />
                 Рекомендации
               </Link>
             </li>
             <li className={styles.navItem}>
-              <Link to="/">
+              <Link to={linkToMain}>
                 <Icon3 className={styles.navIcon} />
                 Популярное
               </Link>
             </li>
             <li className={styles.navItem}>
-              <Link to="/">
+              <Link to={linkToMain}>
                 <Icon4 className={styles.navIcon} />О сервисе
               </Link>
             </li>
@@ -79,10 +81,16 @@ export function Main() {
       </div>
       <div className={styles.right}>
         <div className={styles.arrows}>
-          <div className={styles.prevArrow} onClick={() => handleArrowsClick('prev')}>
+          <div
+            className={styles.prevArrow}
+            onClick={() => handleArrowsClick('prev')}
+          >
             <PrevArrowIcon style={{ marginTop: 27 }} />
           </div>
-          <div className={styles.nextArrow} onClick={() => handleArrowsClick('next')}>
+          <div
+            className={styles.nextArrow}
+            onClick={() => handleArrowsClick('next')}
+          >
             <NextArrowIcon style={{ marginTop: 29 }} />
           </div>
         </div>

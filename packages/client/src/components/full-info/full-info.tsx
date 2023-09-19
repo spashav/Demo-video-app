@@ -5,6 +5,9 @@ import { PlayerPlayingState } from '@demo-video-app/player/src/public-api';
 import { useApi } from '../../utils/use-api';
 import { Banner } from '../banner/banner';
 import { TextProgress } from '../text-progress/text-progress';
+import { useFlags } from '@demo-video-app/client/src/utils/use-flags';
+import { useMemo } from 'react';
+import { Fake } from '@demo-video-app/client/src/components/fake/fake';
 
 interface FullInfo {
   id: string;
@@ -20,6 +23,8 @@ interface FullInfoProps {
   currentTime: number;
 }
 
+const fakesWidth = ['100%', '93%', '96%', '98%', '84%'];
+
 export function FullInfo({
   id,
   className,
@@ -27,10 +32,28 @@ export function FullInfo({
   duration,
   currentTime,
 }: FullInfoProps) {
-  const fullInfo = useApi<FullInfo>({ apiUrl: `/watch/${id}` });
-  if (!fullInfo.response) {
+  const { isLoading, response } = useApi<FullInfo>({ apiUrl: `/watch/${id}` });
+  const { useFake } = useFlags();
+  if (isLoading && !useFake) {
     return null;
   }
+
+  const fakes = useMemo(() => {
+    if (!useFake) {
+      return null;
+    }
+    return Array(5)
+      .fill(null)
+      .map((_, index) => (
+        <Fake
+          key={index}
+          className={styles.fakeDescriptionLine}
+          width={fakesWidth[index]}
+          height={13}
+          borderRadius={8}
+        />
+      ));
+  }, [useFake]);
 
   return (
     <div className={cn(styles.fullInfo, className)}>
@@ -39,14 +62,19 @@ export function FullInfo({
         className={styles.textProgress}
         duration={duration}
         time={currentTime}
-        states={fullInfo.response.states}
+        states={response?.states || []}
+        isLoading={isLoading}
       />
       <Banner
         isPaused={playingState === PlayerPlayingState.PAUSE}
         className={styles.banner}
       />
       <div className={styles.descriptionHeader}>Описание ролика:</div>
-      <div className={styles.description}>{fullInfo.response.description}</div>
+      {!isLoading ? (
+        <div className={styles.description}>{response.description}</div>
+      ) : (
+        fakes
+      )}
     </div>
   );
 }

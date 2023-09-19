@@ -3,7 +3,7 @@
 }
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   column-gap: 24px;
   grid-auto-flow:column;
   overflow:auto;
@@ -53,6 +53,10 @@
 .itemText {
   margin-top: 8px;
   height: 17px;
+}
+.itemFakeText {
+  margin-top: 40px;
+  margin-bottom: 4px;
 }
 .itemTextInner {
   font-size: 14px;

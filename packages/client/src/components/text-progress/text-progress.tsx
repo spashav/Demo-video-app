@@ -3,6 +3,8 @@ import * as _ from 'lodash';
 import cn from 'clsx';
 import { formatDuration } from '../../utils/format-duration';
 import { Card } from '../card/card';
+import { useFlags } from '../../utils/use-flags';
+import { Fake } from '../fake/fake';
 
 export function TextProgress({
   time,
@@ -10,13 +12,46 @@ export function TextProgress({
   className,
   states,
   contentId,
+  isLoading,
 }: {
   time: number;
   duration: number;
   states: { progress: number; text: string; cover: string }[];
   className: string;
   contentId: string;
+  isLoading: boolean;
 }) {
+  const { useFake } = useFlags();
+  if (isLoading) {
+    return (
+      <div className={cn(styles.textProgress, className)}>
+        <div className={styles.grid}>
+          {Array(8)
+            .fill(null)
+            .map((_, index) => {
+              return (
+                <div className={styles.item} key={index}>
+                  <Fake
+                    className={styles.itemCover}
+                    ratio={0.405}
+                    borderRadius={8}
+                  />
+                  <Fake
+                    className={styles.itemFakeText}
+                    width={'75%'}
+                    height={12}
+                    borderRadius={8}
+                  />
+                </div>
+              );
+            })}
+        </div>
+        <div className={styles.progress} style={{ bottom: 27 }}>
+          <Fake width={'100%'} height={13} borderRadius={8} />
+        </div>
+      </div>
+    );
+  }
   const currentProgress = duration ? (100 * time) / duration : 0;
   const state = _.find(states, (_, index) => {
     const nextState = states[index + 1];
@@ -40,7 +75,7 @@ export function TextProgress({
                 ratio={0.405}
                 cover={cover}
                 id={contentId}
-                onClick={() => {}}
+                withPreload={useFake}
               />
               <div className={styles.itemTime}>
                 {duration === 0 ? '' : formatDuration(duration * progress)}
