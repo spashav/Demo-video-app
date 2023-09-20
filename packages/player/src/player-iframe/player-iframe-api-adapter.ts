@@ -4,12 +4,12 @@ import {
   SettersMethods,
   SubscriptionsMethods,
   PlayerApiMethods,
-} from '@demo-video-app/player/src/public-api';
+} from '../public-api';
 import {
   sendMessageToIframe,
   IframeInEventData,
   IframeOutEventData,
-} from '@demo-video-app/player/src/utils/iframe-messages';
+} from '../utils/iframe-messages';
 
 export class PlayerIframeApiAdapter implements PlayerPublicApi {
   constructor(private iframeWindow: WindowProxy) {}
@@ -36,7 +36,7 @@ export class PlayerIframeApiAdapter implements PlayerPublicApi {
     (apiMethod: SubscriptionsMethods) =>
     (
       cb: Parameters<PlayerPublicApi[SubscriptionsMethods]>[0]
-    ): Promise<ReturnType<PlayerPublicApi[SubscriptionsMethods]>> => {
+    ): ReturnType<PlayerPublicApi[SubscriptionsMethods]> => {
       const apiCallKey = uniqueApiKey++;
       subscriptionsCallbacks[apiCallKey] = (data) => {
         cb(data.result as any);
@@ -50,7 +50,9 @@ export class PlayerIframeApiAdapter implements PlayerPublicApi {
       };
       this.iframeWindow.postMessage(inData);
 
-      return Promise.resolve();
+      return () => {
+        delete subscriptionsCallbacks[apiCallKey]
+      };
     };
 
   public play = this.proxyApiMethod('play');

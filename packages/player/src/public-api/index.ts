@@ -17,11 +17,20 @@ export enum PlayerPlayingState {
   ENDED = 'Ended',
 }
 
+export enum PlayerState {
+  NOT_INITED = 'NOT_INITED',
+  INITIALIZING = 'INITIALIZING',
+  INITED = 'INITED',
+  DESTROYED = 'DESTROYED',
+}
+
 export const isSettersMethod = (
   method: PlayerApiMethods
 ): method is SettersMethods => {
   return settersMethods.includes(method as SettersMethods);
 };
+
+type Unsubscribe = () => void;
 
 export interface PlayerPublicApi {
   // setters
@@ -29,19 +38,25 @@ export interface PlayerPublicApi {
   pause: () => void;
   destroy: () => void;
   // subscriptions
-  onContentImpression: (cb: (props: { isAutoplay: boolean }) => void) => void;
-  onResourceIdle: (cb: () => void) => void;
-  onApiReady: (cb: () => void) => void;
-  onPlayingStateChange: (cb: (state: PlayerPlayingState) => void) => void;
-  onCurrentTimeChange: (cb: (state: { time: number }) => void) => void;
-  onDurationChange: (cb: (state: { time: number }) => void) => void;
-  onError: (cb: (state: { msg: string }) => void) => void;
+  onContentImpression: (
+    cb: (props: { isAutoplay: boolean }) => void
+  ) => Unsubscribe;
+  onResourceIdle: (cb: () => void) => Unsubscribe;
+  onApiReady: (cb: () => void) => Unsubscribe;
+  onPlayingStateChange: (
+    cb: (state: PlayerPlayingState) => void
+  ) => Unsubscribe;
+  onCurrentTimeChange: (cb: (state: { time: number }) => void) => Unsubscribe;
+  onDurationChange: (cb: (state: { time: number }) => void) => Unsubscribe;
+  onError: (cb: (state: { msg: string }) => void) => Unsubscribe;
 }
 
 export type PlayerIframeApi = {
-  [Method in keyof PlayerPublicApi]: (
-    ...data: Parameters<PlayerPublicApi[Method]>
-  ) => Promise<ReturnType<PlayerPublicApi[Method]>>;
+  [Method in keyof PlayerPublicApi]: Method extends SubscriptionsMethods
+    ? PlayerPublicApi[Method]
+    : (
+        ...data: Parameters<PlayerPublicApi[Method]>
+      ) => Promise<ReturnType<PlayerPublicApi[Method]>>;
 };
 
 type InitPlayer<Api extends PlayerIframeApi | PlayerPublicApi> = (props: {

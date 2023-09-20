@@ -1,6 +1,6 @@
 import styles from './watch.module.css';
 
-import { useCallback, useState } from 'react';
+import {useCallback, useState, useRef, useEffect} from 'react';
 
 import { useParams } from 'react-router-dom';
 import {
@@ -20,28 +20,41 @@ interface WindowWithHiddenState {
 
 export function Watch() {
   const { id } = useParams();
+  const playerSubscriptionsRef = useRef<Array<() => void>>();
+  const playerApiRef = useRef<PlayerIframeApi>();
   const [playingState, setPlayingState] = useState<PlayerPlayingState>(
     PlayerPlayingState.NOT_STARTED
   );
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const handleApiLoad = useCallback((playerApi: PlayerIframeApi) => {
-    playerApi.onCurrentTimeChange(({ time }) => setCurrentTime(time));
-    playerApi.onDurationChange(({ time }) => setDuration(time));
-    playerApi.onPlayingStateChange(setPlayingState);
-    playerApi.onError(({ msg }) => logError(msg));
-    playerApi.onContentImpression(() => {
-      const windowWithHiddenState = window as unknown as WindowWithHiddenState;
-      const time = performance.now();
-      const { time: startTime, isFirst } = pageLib.getCurrent();
-      if (isFirst) {
-        !windowWithHiddenState.isHiddenWhileLoad &&
-          logMetric('First start', time);
-      } else {
-        logMetric('Spa start', time - startTime);
-      }
-    });
+    playerApiRef.current = playerApi;
+    (playerSubscriptionsRef.current || []).map((unsubscribe) => unsubscribe());
+    playerSubscriptionsRef.current = [
+      playerApi.onCurrentTimeChange(({ time }) => setCurrentTime(time)),
+      playerApi.onDurationChange(({ time }) => setDuration(time)),
+      playerApi.onPlayingStateChange(setPlayingState),
+      playerApi.onError(({ msg }) => logError(msg)),
+      playerApi.onContentImpression(() => {
+        const windowWithHiddenState =
+          window as unknown as WindowWithHiddenState;
+        const time = performance.now();
+        const { time: startTime, isFirst } = pageLib.getCurrent();
+        if (isFirst) {
+          !windowWithHiddenState.isHiddenWhileLoad &&
+            logMetric('First start', time);
+        } else {
+          logMetric('Spa start', time - startTime);
+        }
+      }),
+    ];
   }, []);
+
+  useEffect(() => {
+    if (playerApiRef.current) {
+      playerApiRef.current.destroy()
+    }
+  }, [])
 
   const handleRelatedClick = useCallback((id: string) => {
     logMetric('Click related', id);

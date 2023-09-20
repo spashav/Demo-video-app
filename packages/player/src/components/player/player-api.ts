@@ -1,6 +1,10 @@
 import videojs from 'video.js';
 import VideoJsPlayerApi from 'video.js/dist/types/player';
-import { PlayerPlayingState, PlayerPublicApi } from '../../public-api';
+import {
+  PlayerPlayingState,
+  PlayerPublicApi,
+  PlayerState,
+} from '../../public-api';
 import { eventEmitter } from '../../utils/event-emitter';
 
 export interface InitOptions {
@@ -15,7 +19,7 @@ export interface InitOptions {
 export class PlayerApi implements PlayerPublicApi {
   private videoJsRef: VideoJsPlayerApi | null = null;
 
-  private contentImpression = eventEmitter<[{ isAutoplay: boolean }]>();
+  private contentImpression = eventEmitter<{ isAutoplay: boolean }>();
   public onContentImpression = this.contentImpression.on;
 
   private resourceIdle = eventEmitter();
@@ -27,22 +31,29 @@ export class PlayerApi implements PlayerPublicApi {
   private playerReady = eventEmitter();
   public onPlayerReady = this.playerReady.on;
 
-  private playingState = eventEmitter<[PlayerPlayingState]>();
+  private playerState = eventEmitter<PlayerState>(PlayerState.NOT_INITED);
+  public onPlayerState = this.playerState.on;
+  public getPlayerState = this.playerState.getEventParams;
+
+  private playingState = eventEmitter<PlayerPlayingState>(
+    PlayerPlayingState.NOT_STARTED,
+  );
   public onPlayingStateChange = this.playingState.on;
 
-  private duration = eventEmitter<[{ time: number }]>();
+  private duration = eventEmitter<{ time: number }>({ time: 0 });
   public onDurationChange = this.duration.on;
 
-  private currentTime = eventEmitter<[{ time: number }]>();
+  private currentTime = eventEmitter<{ time: number }>({ time: 0 });
   public onCurrentTimeChange = this.currentTime.on;
 
-  private error = eventEmitter<[{ msg: string }]>();
+  private error = eventEmitter<{ msg: string }>();
   public onError = this.error.on;
 
   private isContentImpressionEmitted = false;
 
   public setSource = (options: InitOptions, videoRef: HTMLDivElement) => {
     this.isContentImpressionEmitted = false;
+    this.playerState.emit(PlayerState.INITIALIZING);
     if (!this.videoJsRef) {
       const videoElement = document.createElement('video-js');
       videoElement.style.height = '100%';
@@ -109,6 +120,7 @@ export class PlayerApi implements PlayerPublicApi {
   public pause() {}
 
   public destroy = () => {
+    this.playerState.emit(PlayerState.DESTROYED);
     const player = this.videoJsRef;
     if (player && !player.isDisposed()) {
       player.dispose();

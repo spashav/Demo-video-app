@@ -35,9 +35,6 @@ export function Player({
       onApiLoad(api)
       setIsPlayerReady(true)
     });
-    return () => {
-      playerApiPromise.then((api) => api.destroy());
-    };
   }, [id]);
 
   return (
