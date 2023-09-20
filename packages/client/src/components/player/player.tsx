@@ -20,7 +20,7 @@ export function Player({
   onApiLoad: (api: PlayerIframeApi) => void;
 }) {
   const [isPlayerReady, setIsPlayerReady] = useState(false)
-  const { useFake } = useFlags();
+  const { useFake, disableIframe } = useFlags();
   useEffect(() => {
     if (!id) {
       return;
@@ -29,6 +29,7 @@ export function Player({
     const playerApiPromise = getPlayerPublicApi().init({
       id,
       container: CONTAINER_ID,
+      disableIframe,
     });
     playerApiPromise.then((api) => {
       onApiLoad(api)

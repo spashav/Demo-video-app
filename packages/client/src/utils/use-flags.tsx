@@ -2,14 +2,17 @@ import { useContext, createContext, FC, ReactNode, useState } from 'react';
 import type { Request } from 'express';
 
 enum FlagKeys {
-  useFake = 'useFake'
+  useFake = 'useFake',
+  disableIframe = 'disableIframe'
 }
 interface Flags {
   [FlagKeys.useFake]: boolean;
+  [FlagKeys.disableIframe]: boolean;
 }
 
 const defaultFlags: Flags = {
   [FlagKeys.useFake]: false,
+  [FlagKeys.disableIframe]: false,
 }
 
 const flagsContext = createContext<Flags>(defaultFlags);

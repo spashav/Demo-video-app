@@ -59,5 +59,5 @@ export const Player: FC<{
     };
   }, [player]);
 
-  return <div style={{ width: '100%', height: '100%' }} ref={videoRef} />;
+  return <div style={{ width: '100%', height: '100%', borderRadius: 24 }} ref={videoRef} />;
 };

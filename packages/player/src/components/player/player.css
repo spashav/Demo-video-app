@@ -1,3 +1,7 @@
 .vjs-control-bar {
   padding: 0 8px;
+  border-radius: 0 0 24px 24px;
+}
+.video-js {
+  border-radius: 24px;
 }

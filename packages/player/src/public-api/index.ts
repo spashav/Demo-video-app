@@ -47,6 +47,7 @@ export type PlayerIframeApi = {
 type InitPlayer<Api extends PlayerIframeApi | PlayerPublicApi> = (props: {
   id: string;
   container: string;
+  disableIframe?: boolean;
 }) => Promise<Api>;
 
 interface WindowWithPlayer {
