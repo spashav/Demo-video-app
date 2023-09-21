@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import cn from 'clsx';
 import { useFlags } from '../../utils/use-flags';
 import { PlayerLib } from '../../utils/player-lib';
+import { videoSourceCache } from '../../utils/api-cache';
 
 const CONTAINER_ID = '#player';
 
@@ -22,12 +23,14 @@ export function Player({
     if (!id) {
       return;
     }
+    const videoSource = videoSourceCache.get(id);
     setIsPlayerReady(false);
     playerApi
       .init({
         id,
         container: CONTAINER_ID,
         disableIframe,
+        videoSource,
       })
       .then(() => setIsPlayerReady(true));
   }, [id]);

@@ -2,6 +2,7 @@ import {
   getPlayerPublicApi,
   PlayerIframeApi,
   PlayerPlayingState,
+  VideoSource,
 } from '@demo-video-app/player/src/public-api';
 import { logError } from './log-error';
 import { pageLib } from './pages';
@@ -68,15 +69,18 @@ export class PlayerLib {
     container,
     disableIframe,
     id,
+    videoSource,
   }: {
     container: string;
     id: string;
     disableIframe: boolean;
+    videoSource?: VideoSource;
   }) => {
     const api = await getPlayerPublicApi().init({
       id,
       container,
       disableIframe,
+      videoSource,
     });
     this.api = api;
 

@@ -4,31 +4,27 @@ import './player.css';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlayerApi, InitOptions } from './player-api';
+import { VideoSource } from '../../public-api';
 
 interface VideoConfig {
   autoplay?: boolean;
   id: string;
-  source?: {
-    src: string;
-    type: string;
-    poster: string;
-    id: string
-  };
+  source?: VideoSource;
 }
 
 export const Player: FC<{
   videoConfig: VideoConfig;
   overridePlayerApi?: PlayerApi;
-}> = props => {
+}> = (props) => {
   const { videoConfig, overridePlayerApi } = props;
   const videoRef = useRef<HTMLDivElement>(null);
   const [player] = useState(() => overridePlayerApi || new PlayerApi());
 
-  const [source, setSource] = useState<VideoConfig['source']>(videoConfig.source);
+  const [source, setSource] = useState<VideoSource>(videoConfig.source);
 
   useEffect(() => {
     if (source && source.id === videoConfig.id) {
-      return
+      return;
     }
     const fetchConfig = async () => {
       const res = await fetch(`/api/player_config/${videoConfig.id}`);
@@ -59,5 +55,10 @@ export const Player: FC<{
     };
   }, [player]);
 
-  return <div style={{ width: '100%', height: '100%', borderRadius: 24 }} ref={videoRef} />;
+  return (
+    <div
+      style={{ width: '100%', height: '100%', borderRadius: 24 }}
+      ref={videoRef}
+    />
+  );
 };

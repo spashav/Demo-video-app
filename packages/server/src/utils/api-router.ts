@@ -3,23 +3,28 @@ import { awaitTime } from './await-time';
 import { sendJson } from './send';
 
 interface Source {
-  src: string;
-  poster: string;
-  type: string;
+  playerConfig: {
+    src: string;
+    // Картинка для превью в плеере
+    poster: string;
+    type: string;
+  };
+  //Картинка для превью в ленте
   cover: string;
   title: string;
   description: string;
   states: { progress: number; text: string; cover: string }[];
-  duration: number
-  genre: string
+  duration: number;
+  genre: string;
 }
 
 const sources: Source[] = [
   {
-    //src: 'https://storage.googleapis.com/shaka-demo-assets/bbb-dark-truths-hls/hls.m3u8',
-    src: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/master.m3u8',
-    poster: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-    type: 'application/x-mpegURL',
+    playerConfig: {
+      src: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/master.m3u8',
+      poster: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+      type: 'application/x-mpegURL',
+    },
     cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
     title: 'Видео о зайце',
     description: 'Длинное описание видео о зайце',
@@ -69,11 +74,12 @@ const sources: Source[] = [
     genre: 'Кулинария',
   },
   {
-    //src: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
-    src: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/playlist.m3u8',
-    poster:
-      'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
-    type: 'application/x-mpegURL',
+    playerConfig: {
+      src: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/playlist.m3u8',
+      poster:
+        'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
+      type: 'application/x-mpegURL',
+    },
     cover:
       'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
     title: 'Видео о роботах',
@@ -81,17 +87,20 @@ const sources: Source[] = [
     states: [
       {
         progress: 0,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
+        cover:
+          'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
         text: 'Тестовое описание того, что происходит с роботами от 0 до 33%',
       },
       {
         progress: 33,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
+        cover:
+          'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
         text: 'Тестовое описание того, что происходит с роботами от 33 до 66%',
       },
       {
         progress: 66,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
+        cover:
+          'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
         text: 'Тестовое описание того, что происходит с роботами от 66 до 100%',
       },
     ],
@@ -111,13 +120,37 @@ const getSource = <Keys extends keyof Source>(
   ) as Pick<Source, Keys>;
 };
 
+const addIdToPlayerConfig = (
+  item: Pick<Source, 'playerConfig'> & { id: string }
+) => {
+  if (!item.playerConfig) {
+    return { ...item };
+  }
+  return {
+    ...item,
+    playerConfig: {
+      ...item.playerConfig,
+      id: item.id,
+    },
+  };
+};
+
 export const initApiRouter = () => {
   const router = Router();
 
   router
     .get('/feed', async (req, res) => {
       await awaitTime(1000);
-      const filter = new Set(['cover' , 'title', 'duration', 'genre'] as const);
+      const filter = new Set([
+        'cover',
+        'title',
+        'duration',
+        'genre',
+        'playerConfig',
+      ] as const);
+      if (!req.query['usePreloadAndDelayedRelated']) {
+        filter.delete('playerConfig');
+      }
 
       sendJson(
         res,
@@ -127,13 +160,17 @@ export const initApiRouter = () => {
             id: index.toString(),
             ...getSource(index, filter),
           }))
+          .map((item) => addIdToPlayerConfig(item))
       );
     })
     .get('/related', async (req, res) => {
       await awaitTime(1000);
-      const filter = new Set(['cover'] as const);
+      const filter = new Set(['cover', 'playerConfig'] as const);
       const id = typeof req.query['id'] === 'string' ? req.query['id'] : '0';
 
+      if (!req.query['usePreloadAndDelayedRelated']) {
+        filter.delete('playerConfig');
+      }
       sendJson(
         res,
         Array(100)
@@ -145,6 +182,7 @@ export const initApiRouter = () => {
               ...getSource(relatedId, filter),
             };
           })
+          .map((item) => addIdToPlayerConfig(item))
       );
     })
     .get('/watch/:id', async (req, res) => {
@@ -160,11 +198,15 @@ export const initApiRouter = () => {
     .get('/player_config/:id', async (req, res) => {
       await awaitTime(50);
       const { id } = req.params;
-      const filter = new Set(['src', 'poster', 'type'] as const);
+      const filter = new Set(['playerConfig'] as const);
 
-      sendJson(res, {
+      const source = {
         ...getSource(parseInt(id, 10), filter),
         id,
+      };
+
+      sendJson(res, {
+        ...addIdToPlayerConfig(source).playerConfig,
       });
     })
     .use('', (req, res) => {

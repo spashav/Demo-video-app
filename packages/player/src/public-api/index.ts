@@ -17,6 +17,13 @@ export enum PlayerPlayingState {
   ENDED = 'Ended',
 }
 
+export interface VideoSource {
+  src: string;
+  type: string;
+  poster: string;
+  id: string;
+}
+
 export enum PlayerState {
   NOT_INITED = 'NOT_INITED',
   INITIALIZING = 'INITIALIZING',
@@ -63,6 +70,7 @@ type InitPlayer<Api extends PlayerIframeApi | PlayerPublicApi> = (props: {
   id: string;
   container: string;
   disableIframe?: boolean;
+  videoSource?: VideoSource;
 }) => Promise<Api>;
 
 interface WindowWithPlayer {

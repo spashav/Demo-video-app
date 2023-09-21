@@ -1,7 +1,7 @@
 import * as ReactDOM from 'react-dom/client';
 
-import {getPlayerPublicApi, PlayerState} from '../../public-api';
-import { PlayerIframe, contentIdProvider } from './player-iframe';
+import { getPlayerPublicApi, PlayerState, VideoSource } from '../../public-api';
+import { PlayerIframe, videoSourceProvider } from './player-iframe';
 import { PlayerApiInnerIframe } from './player-iframe-api';
 
 export const initPublicApi = ({ playerVersion }: { playerVersion: string }) => {
@@ -12,23 +12,32 @@ export const initPublicApi = ({ playerVersion }: { playerVersion: string }) => {
 
   publicApi.inner.init = async ({
     container,
+    videoSource,
     id,
   }: {
     id: string;
     container: string;
+    videoSource?: VideoSource;
   }) => {
     if (playerApi && playerApi.getPlayerState() === PlayerState.DESTROYED) {
-      playerApi = undefined
+      videoSourceProvider.clear()
+      playerApi = undefined;
     }
     if (playerApi) {
-      contentIdProvider.emit(id);
+      videoSourceProvider.emit({ id, source: videoSource });
       return playerApi;
     }
     // Тут тоже можно убрать iframe api
     playerApi = new PlayerApiInnerIframe();
     ReactDOM.createRoot(
       document.getElementById(container) as HTMLElement
-    ).render(<PlayerIframe initialContentId={id} playerApi={playerApi} />);
+    ).render(
+      <PlayerIframe
+        initialContentId={id}
+        playerApi={playerApi}
+        initialSource={videoSource}
+      />
+    );
     await new Promise<void>((resolve) => {
       playerApi.onApiReady(resolve, true);
     });

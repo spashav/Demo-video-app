@@ -1,12 +1,16 @@
 import styles from './main.module.css';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import cn from 'clsx';
 import { Swiper as SwiperClass } from 'swiper/types';
+import { VideoSource } from '@demo-video-app/player/src/public-api';
 import { useApi } from '../../utils/use-api';
 import { pageLib } from '../../utils/pages';
 import { logMetric } from '../../utils/log-metric';
+import { Swiper } from '../swiper/swiper';
+import { useFlags } from '../../utils/use-flags';
+import { videoSourceCache } from '../../utils/api-cache';
 
 import { ReactComponent as Icon1 } from '../../assets/nav-1.svg';
 import { ReactComponent as Icon2 } from '../../assets/nav-2.svg';
@@ -14,7 +18,6 @@ import { ReactComponent as Icon3 } from '../../assets/nav-3.svg';
 import { ReactComponent as Icon4 } from '../../assets/nav-4.svg';
 import { ReactComponent as NextArrowIcon } from '../../assets/next-arrow.svg';
 import { ReactComponent as PrevArrowIcon } from '../../assets/prev-arrow.svg';
-import { Swiper } from '@demo-video-app/client/src/components/swiper/swiper';
 
 interface FeedItem {
   id: string;
@@ -22,16 +25,25 @@ interface FeedItem {
   title: string;
   genre: string;
   duration: number;
+  playerConfig?: VideoSource;
 }
 export function Main() {
+  const { usePreloadAndDelayedRelated } = useFlags();
   const [searchParams] = useSearchParams();
   const linkToMain = `/?${searchParams.toString()}`;
   const related = useApi<FeedItem[]>({ apiUrl: `/feed` });
   const [swiperApi, setSwiperApi] = useState<SwiperClass>();
+
   const handleItemClick = useCallback((id: string) => {
     logMetric('Click related', id);
     pageLib.startPage();
   }, []);
+  useEffect(() => {
+    related.response?.forEach(
+      ({ id, playerConfig }) =>
+        playerConfig && videoSourceCache.set(id, playerConfig)
+    );
+  }, [related.response]);
   const handleArrowsClick = (direction: 'prev' | 'next') => {
     if (!swiperApi) {
       return;

@@ -2,18 +2,30 @@ import { Player } from '../player/player';
 import { useEffect, useState } from 'react';
 import { PlayerApiInnerIframe } from './player-iframe-api';
 import { eventEmitter } from '../../utils/event-emitter';
+import { VideoSource } from '../../public-api';
 
-export const contentIdProvider = eventEmitter<string>();
+export const videoSourceProvider = eventEmitter<{
+  source?: VideoSource;
+  id: string;
+}>();
+
 export function PlayerIframe({
   initialContentId,
+  initialSource,
   playerApi,
 }: {
   initialContentId: string;
+  initialSource?: VideoSource;
   playerApi: PlayerApiInnerIframe;
 }) {
   const [id, setId] = useState<string>(initialContentId);
+  const [source, setSource] = useState<VideoSource | undefined>(initialSource);
+
   useEffect(() => {
-    contentIdProvider.on(setId);
+    return videoSourceProvider.on(({ id, source }) => {
+      setId(id);
+      setSource(source);
+    });
   }, []);
 
   useEffect(() => {
@@ -23,5 +35,5 @@ export function PlayerIframe({
   if (!id) {
     return <div>Empty id or version in url</div>;
   }
-  return <Player overridePlayerApi={playerApi} videoConfig={{ id }} />;
+  return <Player overridePlayerApi={playerApi} videoConfig={{ id, source }} />;
 }
