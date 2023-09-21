@@ -1,10 +1,11 @@
 import styles from './app.module.css';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Route, Routes, useSearchParams } from 'react-router-dom';
 import { Main } from '../main/main';
 import { Watch } from '../watch/watch';
 import { pageLib } from '../../utils/pages';
+import { PlayerLib } from '../../utils/player-lib';
 import { ReactComponent as PlusIcon } from '../../assets/plus.svg';
 import { ReactComponent as BurgerIcon } from '../../assets/burger.svg';
 
@@ -27,6 +28,7 @@ if (typeof window !== 'undefined') {
 
 export function App() {
   const [searchParams] = useSearchParams();
+  const [playerApi] = useState(() => new PlayerLib());
   useEffect(() => {
     addEventListener('popstate', () => {
       pageLib.startPage();
@@ -58,8 +60,8 @@ export function App() {
         </Routes>
       </div>
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/watch/:id" element={<Watch />} />
+        <Route path="/" element={<Main playerApi={playerApi} />} />
+        <Route path="/watch/:id" element={<Watch playerApi={playerApi} />} />
       </Routes>
     </div>
   );

@@ -76,6 +76,7 @@ type InitPlayer<Api extends PlayerIframeApi | PlayerPublicApi> = (props: {
 interface WindowWithPlayer {
   PLAYER: {
     init: InitPlayer<PlayerIframeApi>;
+    loadResources: (props: { disableIframe?: boolean }) => Promise<void>;
     inner: {
       init: InitPlayer<PlayerPublicApi>;
     };

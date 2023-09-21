@@ -2,7 +2,7 @@ export const playerLoaderTemplate = (playerVersion: { get: () => string }) => `
   (() => {
     window.PLAYER = window.PLAYER || {};
     let promise
-    window.PLAYER.init = (props) => {
+    window.PLAYER.loadResources = (props) => {
       const isIframe = !props.disableIframe;
       promise = promise || (isIframe ?
         loadScript('/player_iframe_v${playerVersion.get()}.js') :
@@ -11,8 +11,12 @@ export const playerLoaderTemplate = (playerVersion: { get: () => string }) => `
           loadStyles('/player_v${playerVersion.get()}.css'),
         ])
       );
-      return promise.then(() => {
-        return isIframe ? window.PLAYER.iframe.init(props) : window.PLAYER.inner.init(props);
+      return promise
+    }
+    window.PLAYER.init = (props) => {
+      const disableIframe = Boolean(props.disableIframe);
+      return window.PLAYER.loadResources({ disableIframe }).then(() => {
+        return disableIframe ? window.PLAYER.inner.init(props) : window.PLAYER.iframe.init(props);
       })
     }
 

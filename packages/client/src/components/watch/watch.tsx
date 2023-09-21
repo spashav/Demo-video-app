@@ -11,9 +11,8 @@ import { logMetric } from '../../utils/log-metric';
 import { PlayerLib } from '../../utils/player-lib';
 import { usePlayerState } from '../../utils/use-player-state';
 
-export function Watch() {
+export function Watch({ playerApi }: { playerApi: PlayerLib }) {
   const { id } = useParams();
-  const [playerApi] = useState(() => new PlayerLib());
   const duration = usePlayerState(playerApi, 'duration');
   const currentTime = usePlayerState(playerApi, 'currentTime');
   const playingState = usePlayerState(playerApi, 'playingState');

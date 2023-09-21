@@ -11,6 +11,7 @@ import { logMetric } from '../../utils/log-metric';
 import { Swiper } from '../swiper/swiper';
 import { useFlags } from '../../utils/use-flags';
 import { videoSourceCache } from '../../utils/api-cache';
+import { PlayerLib } from '../../utils/player-lib';
 
 import { ReactComponent as Icon1 } from '../../assets/nav-1.svg';
 import { ReactComponent as Icon2 } from '../../assets/nav-2.svg';
@@ -27,12 +28,18 @@ interface FeedItem {
   duration: number;
   playerConfig?: VideoSource;
 }
-export function Main() {
-  const { usePreloadAndDelayedRelated } = useFlags();
+export function Main({ playerApi }: { playerApi: PlayerLib }) {
+  const { usePreloadAndDelayedRelated, disableIframe } = useFlags();
   const [searchParams] = useSearchParams();
   const linkToMain = `/?${searchParams.toString()}`;
   const related = useApi<FeedItem[]>({ apiUrl: `/feed` });
   const [swiperApi, setSwiperApi] = useState<SwiperClass>();
+
+  useEffect(() => {
+    if (usePreloadAndDelayedRelated) {
+      playerApi.preloadResources({ disableIframe });
+    }
+  }, [usePreloadAndDelayedRelated, playerApi]);
 
   const handleItemClick = useCallback((id: string) => {
     logMetric('Click related', id);

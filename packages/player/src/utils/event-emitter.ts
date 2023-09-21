@@ -13,6 +13,7 @@ export const eventEmitter = <Params = undefined>(initialParams?: Params) => {
       callbacks.push({ cb, once });
       return () => removeCb(cb);
     },
+    clear: () => callbacks = [],
     emit: (...param: Params extends undefined ? [] : [Params]) => {
       lastParams = param[0];
       [...callbacks].forEach(({ cb, once }) => {

@@ -117,4 +117,10 @@ export class PlayerLib {
     this.api?.destroy();
     this.stateChangeSubscriptions = {};
   };
+
+  public preloadResources = ({ disableIframe }: { disableIframe: boolean }) => {
+    getPlayerPublicApi().loadResources({
+      disableIframe,
+    });
+  };
 }
