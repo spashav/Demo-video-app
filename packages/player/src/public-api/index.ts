@@ -2,7 +2,7 @@ export type SubscriptionsMethods =
   | 'onApiReady'
   | 'onDurationChange'
   | 'onContentImpression'
-  | 'onResourceIdle'
+  | 'onPlayerStateChange'
   | 'onPlayingStateChange'
   | 'onCurrentTimeChange'
   | 'onError';
@@ -48,7 +48,7 @@ export interface PlayerPublicApi {
   onContentImpression: (
     cb: (props: { isAutoplay: boolean }) => void
   ) => Unsubscribe;
-  onResourceIdle: (cb: () => void) => Unsubscribe;
+  onPlayerStateChange: (cb: (state: PlayerState) => void) => Unsubscribe;
   onApiReady: (cb: () => void) => Unsubscribe;
   onPlayingStateChange: (
     cb: (state: PlayerPlayingState) => void

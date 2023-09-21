@@ -39,7 +39,7 @@ export class PlayerIframeApiAdapter implements PlayerPublicApi {
     ): ReturnType<PlayerPublicApi[SubscriptionsMethods]> => {
       const apiCallKey = uniqueApiKey++;
       subscriptionsCallbacks[apiCallKey] = (data) => {
-        cb(data.result as any);
+        cb(data.result as never);
       };
 
       const inData: IframeInEventData<SubscriptionsMethods> = {
@@ -75,7 +75,7 @@ export class PlayerIframeApiAdapter implements PlayerPublicApi {
   public onDurationChange = this.proxyApiSubscriptions(
     'onDurationChange'
   );
-  public onResourceIdle = this.proxyApiSubscriptions('onResourceIdle');
+  public onPlayerStateChange = this.proxyApiSubscriptions('onPlayerStateChange');
   public onContentImpression = this.proxyApiSubscriptions(
     'onContentImpression'
   );

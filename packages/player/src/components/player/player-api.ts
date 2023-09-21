@@ -22,9 +22,6 @@ export class PlayerApi implements PlayerPublicApi {
   private contentImpression = eventEmitter<{ isAutoplay: boolean }>();
   public onContentImpression = this.contentImpression.on;
 
-  private resourceIdle = eventEmitter();
-  public onResourceIdle = this.resourceIdle.on;
-
   private apiReady = eventEmitter();
   public onApiReady = this.apiReady.on;
 
@@ -32,8 +29,8 @@ export class PlayerApi implements PlayerPublicApi {
   public onPlayerReady = this.playerReady.on;
 
   private playerState = eventEmitter<PlayerState>(PlayerState.NOT_INITED);
-  public onPlayerState = this.playerState.on;
-  public getPlayerState = this.playerState.getEventParams;
+  public onPlayerStateChange = this.playerState.on;
+  public getPlayerState = this.playerState.getLastEventParams;
 
   private playingState = eventEmitter<PlayerPlayingState>(
     PlayerPlayingState.NOT_STARTED,
@@ -84,7 +81,9 @@ export class PlayerApi implements PlayerPublicApi {
         });
       });
       player.on('canplaythrough', () => {
-        this.resourceIdle.emit();
+        if (this.getPlayerState() !== PlayerState.INITED) {
+          this.playerState.emit(PlayerState.INITED);
+        }
       });
       player.on('error', () => {
         this.error.emit({ msg: 'Some player error' });

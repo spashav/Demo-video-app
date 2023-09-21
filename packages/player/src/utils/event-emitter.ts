@@ -22,6 +22,6 @@ export const eventEmitter = <Params = undefined>(initialParams?: Params) => {
         }
       });
     },
-    getEventParams: () => lastParams,
+    getLastEventParams: () => lastParams,
   };
 };

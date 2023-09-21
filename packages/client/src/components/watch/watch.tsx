@@ -44,6 +44,7 @@ export function Watch() {
       </div>
       <Related
         id={id}
+        playerApi={playerApi}
         className={styles.related}
         onClick={handleRelatedClick}
       />

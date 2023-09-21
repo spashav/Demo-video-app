@@ -2,6 +2,7 @@ import {
   getPlayerPublicApi,
   PlayerIframeApi,
   PlayerPlayingState,
+  PlayerState,
   VideoSource,
 } from '@demo-video-app/player/src/public-api';
 import { logError } from './log-error';
@@ -12,6 +13,7 @@ export interface PlayerLibState {
   currentTime: number;
   duration: number;
   playingState: PlayerPlayingState;
+  playerState: PlayerState;
 }
 
 interface WindowWithHiddenState {
@@ -23,6 +25,7 @@ export class PlayerLib {
     currentTime: 0,
     duration: 0,
     playingState: PlayerPlayingState.NOT_STARTED,
+    playerState: PlayerState.NOT_INITED,
   };
   private api?: PlayerIframeApi;
   private playerApiUnsubscribeCallbacks: Array<() => void> = [];
@@ -90,6 +93,9 @@ export class PlayerLib {
       api.onDurationChange(({ time }) => this.setState('duration', time)),
       api.onPlayingStateChange((playingState) =>
         this.setState('playingState', playingState)
+      ),
+      api.onPlayerStateChange((playerState) =>
+        this.setState('playerState', playerState)
       ),
       api.onError(({ msg }) => logError(msg)),
       api.onContentImpression(() => {

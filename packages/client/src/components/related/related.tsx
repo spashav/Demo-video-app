@@ -3,12 +3,16 @@ import styles from './related.module.css';
 import cn from 'clsx';
 import { useEffect, useMemo } from 'react';
 
-import { VideoSource } from '@demo-video-app/player/src/public-api';
+import {
+  PlayerState,
+  VideoSource,
+} from '@demo-video-app/player/src/public-api';
 import { useApi } from '../../utils/use-api';
 import { Card } from '../card/card';
 import { useFlags } from '../../utils/use-flags';
 import { Fake } from '../fake/fake';
 import { videoSourceCache } from '../../utils/api-cache';
+import { PlayerLib } from '../../utils/player-lib';
 
 interface RelatedItem {
   id: string;
@@ -18,14 +22,37 @@ interface RelatedItem {
 export function Related({
   id,
   className,
+  playerApi,
   onClick,
 }: {
   id: string;
   className: string;
+  playerApi: PlayerLib;
   onClick: (id: string) => void;
 }) {
-  const related = useApi<RelatedItem[]>({ apiUrl: `/related?id=${id}` });
-  const { useFake } = useFlags();
+  const { useFake, usePreloadAndDelayedRelated } = useFlags();
+
+  const awaitPlayerLoadPromise = useMemo(() => {
+    if (!usePreloadAndDelayedRelated) {
+      return Promise.resolve();
+    }
+    return new Promise<void>((resolve) => {
+      const check = () => {
+        const state = playerApi.getState('playerState');
+        if (state === PlayerState.INITED || state === PlayerState.DESTROYED) {
+          unsubscribe();
+          return resolve();
+        }
+      };
+      let unsubscribe = playerApi.subscribeOnStateChange('playerState', check);
+      check();
+    });
+  }, [id, playerApi]);
+
+  const related = useApi<RelatedItem[]>({
+    apiUrl: `/related?id=${id}`,
+    awaitPromise: awaitPlayerLoadPromise,
+  });
 
   useEffect(() => {
     related.response?.forEach(
