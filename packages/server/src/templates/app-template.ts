@@ -1,12 +1,31 @@
 import { Request } from 'express';
 import fetch from 'node-fetch';
+import { InitialClientState } from '@demo-video-app/client/src/types/initial-client-state';
+import { escapeHtmlEntities } from '../utils/escape-html-entities';
 
-export const appTemplate = async (req: Request) => {
+export const getWatchTemplate = async (req: Request) => {
+  if (!req.query['useDelayedApp']) {
+    return getCommonTemplate(req);
+  }
+  const apiBaseUrl = `http://${req.header('host')}`;
+  const { id } = req.params;
+  const videoSourceRes = await fetch(`${apiBaseUrl}/api/player_config/${id}`);
+  const videoSource = (await videoSourceRes.json()) as InitialClientState['videoSource'];
+  return getCommonTemplate(req, { videoSource });
+};
+export const getMainTemplate = async (req: Request) => {
+  return getCommonTemplate(req);
+};
+
+const getCommonTemplate = async (req: Request, appState: InitialClientState = {}) => {
   let playerResources: { js: string[]; css: string[] } | undefined;
-  const apiBaseUrl = `http://${req.header('host')}`
+  const apiBaseUrl = `http://${req.header('host')}`;
   if (req.query['useDelayedApp']) {
-    const res = await fetch(`${apiBaseUrl}/release/get-player-resources`);
-    playerResources = await res.json() as typeof playerResources
+    const playerResourcesRes = await fetch(
+      `${apiBaseUrl}/release/get-player-resources`
+    );
+    playerResources =
+      (await playerResourcesRes.json()) as typeof playerResources;
   }
 
   const scripts = [
@@ -52,6 +71,9 @@ export const appTemplate = async (req: Request) => {
     })()
     </script>
     <div id="root"></div>
+    <script>
+      window.APP_STATE = ${escapeHtmlEntities(JSON.stringify(appState))}
+    </script>
     ${scripts
       .map((script) => `<script src="${script}" type="module"></script>`)
       .join('\n')}

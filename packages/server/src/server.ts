@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 
 import { App } from '@demo-video-app/client/src/components/app/app';
-import { appTemplate } from './templates/app-template';
+import { getMainTemplate, getWatchTemplate } from './templates/app-template';
 import { playerEmbedTemplate } from './templates/player-embed-template';
 import { playerLoaderTemplate } from './templates/player-loader-template';
 import { handleSsrRequest } from './utils/handle-ssr-request';
@@ -47,7 +47,8 @@ app.use('/player/*', (req, res) => {
     body: playerEmbedTemplate(req),
   });
 });
-app.use('*', handleSsrRequest(appTemplate, App));
+app.use('/watch/:id', handleSsrRequest(getWatchTemplate, App));
+app.use('*', handleSsrRequest(getMainTemplate, App));
 
 const server = app.listen(port, () => {
   // Server has started
