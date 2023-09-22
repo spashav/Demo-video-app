@@ -10,7 +10,8 @@ export const initPublicApi = ({ playerVersion }: { playerVersion: string }) => {
 
   let playerApi: PlayerApiInnerIframe | undefined;
 
-  publicApi.inner.init = async ({
+  // @ts-ignore
+  publicApi.init = publicApi.inner.init = async ({
     container,
     videoSource,
     id,

@@ -1,4 +1,29 @@
-export const appTemplate = () => `
+import { Request } from 'express';
+import fetch from 'node-fetch';
+
+export const appTemplate = async (req: Request) => {
+  let playerResources: { js: string[]; css: string[] } | undefined;
+  const apiBaseUrl = `http://${req.header('host')}`
+  if (req.query['useDelayedApp']) {
+    const res = await fetch(`${apiBaseUrl}/release/get-player-resources`);
+    playerResources = await res.json() as typeof playerResources
+  }
+
+  const scripts = [
+    'runtime.js',
+    'styles.js',
+    'vendor.js',
+    ...(playerResources?.js || ['player_loader.js']),
+    'main.js',
+  ];
+  const styles = [
+    'vendor.css',
+    'styles.css',
+    'main.css',
+    ...(playerResources?.css || []),
+  ];
+
+  return `
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,9 +32,9 @@ export const appTemplate = () => `
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="stylesheet" href="vendor.css" />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="main.css" />
+    ${styles
+      .map((style) => `<link rel="stylesheet" href="${style}" />`)
+      .join('\n')}
   </head>
   <body>
     <script>
@@ -27,11 +52,10 @@ export const appTemplate = () => `
     })()
     </script>
     <div id="root"></div>
-    <script src="runtime.js" type="module"></script>
-    <script src="styles.js" type="module"></script>
-    <script src="vendor.js" type="module"></script>
-    <script src="player_loader.js" type="module"></script>
-    <script src="main.js" type="module"></script>
+    ${scripts
+      .map((script) => `<script src="${script}" type="module"></script>`)
+      .join('\n')}
   </body>
 </html>
-`
+`;
+};

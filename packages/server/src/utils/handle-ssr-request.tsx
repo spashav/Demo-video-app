@@ -7,13 +7,14 @@ import { ComponentType } from 'react';
 import { FlagsContextProvider } from '@demo-video-app/client/src/utils/use-flags';
 
 export function handleSsrRequest(
-  template: (req: Request) => string,
+  template: (req: Request) => Promise<string>,
   Comp: ComponentType
 ) {
-  return function render(req: Request, res: Response) {
+  return async function render(req: Request, res: Response) {
     let didError = false;
+    const templateStr = await template(req)
 
-    const [htmlStart, htmlEnd] = template(req).split(`<div id="root"></div>`);
+    const [htmlStart, htmlEnd] = templateStr.split(`<div id="root"></div>`);
 
     // For bots (e.g. search engines), the content will not be streamed but render all at once.
     // For users, content should be streamed to the user as they are ready.

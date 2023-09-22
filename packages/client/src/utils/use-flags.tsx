@@ -3,19 +3,22 @@ import type { Request } from 'express';
 
 enum FlagKeys {
   useFake = 'useFake',
-  usePreloadAndDelayedRelated = 'usePreloadAndDelayedRelated',
   disableIframe = 'disableIframe',
+  usePreloadAndDelayedRelated = 'usePreloadAndDelayedRelated',
+  useDelayedApp = 'useDelayedApp',
 }
 interface Flags {
   [FlagKeys.useFake]: boolean;
   [FlagKeys.disableIframe]: boolean;
   [FlagKeys.usePreloadAndDelayedRelated]: boolean;
+  [FlagKeys.useDelayedApp]: boolean;
 }
 
 const defaultFlags: Flags = {
   [FlagKeys.useFake]: false,
   [FlagKeys.disableIframe]: false,
   [FlagKeys.usePreloadAndDelayedRelated]: false,
+  [FlagKeys.useDelayedApp]: false,
 };
 
 const flagsContext = createContext<Flags>(defaultFlags);

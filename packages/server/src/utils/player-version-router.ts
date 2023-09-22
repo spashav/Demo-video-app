@@ -15,6 +15,16 @@ export const initPlayerVersionRouter = (playerVersion: {
     })
     .get('/get-player-version', async (req, res) => {
       sendJson(res, { version: playerVersion.get() });
+    })
+    .get('/get-player-resources', async (req, res) => {
+      sendJson(res, {
+        js: [
+          `/player_v${playerVersion.get()}.js`
+        ],
+        css: [
+          `/player_v${playerVersion.get()}.css`
+        ]
+      });
     });
 
   return router;

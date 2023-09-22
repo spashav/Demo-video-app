@@ -119,7 +119,7 @@ export class PlayerLib {
   };
 
   public preloadResources = ({ disableIframe }: { disableIframe: boolean }) => {
-    getPlayerPublicApi().loadResources({
+    getPlayerPublicApi().loadResources?.({
       disableIframe,
     });
   };
