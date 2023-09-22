@@ -3,8 +3,8 @@ import styles from './player.module.css';
 import { useEffect, useState } from 'react';
 import cn from 'clsx';
 import { useFlags } from '../../utils/use-flags';
-import { PlayerLib } from '../../utils/player-lib';
 import { videoSourceCache } from '../../utils/api-cache';
+import type { PlayerLib } from '../../global-lib-bundle/player-lib';
 
 const CONTAINER_ID = '#player';
 

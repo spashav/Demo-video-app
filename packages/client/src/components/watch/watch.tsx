@@ -1,18 +1,17 @@
 import styles from './watch.module.css';
 
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useParams } from 'react-router-dom';
 import { Player } from '../player/player';
 import { Related } from '../related/related';
 import { FullInfo } from '../full-info/full-info';
-import { pageLib } from '../../utils/pages';
-import { logMetric } from '../../utils/log-metric';
-import { PlayerLib } from '../../utils/player-lib';
 import { usePlayerState } from '../../utils/use-player-state';
+import { GlobalLib } from '../../types/global-lib';
 
-export function Watch({ playerApi }: { playerApi: PlayerLib }) {
+export function Watch({ globalLib }: { globalLib: GlobalLib }) {
   const { id } = useParams();
+  const playerApi = globalLib.getPlayerLib()
   const duration = usePlayerState(playerApi, 'duration');
   const currentTime = usePlayerState(playerApi, 'currentTime');
   const playingState = usePlayerState(playerApi, 'playingState');
@@ -22,8 +21,8 @@ export function Watch({ playerApi }: { playerApi: PlayerLib }) {
   }, []);
 
   const handleRelatedClick = useCallback((id: string) => {
-    logMetric('Click related', id);
-    pageLib.startPage();
+    globalLib.logMetric('Click related', id);
+    globalLib.getPageLib().startPage();
   }, []);
 
   if (!id) {

@@ -1,13 +1,13 @@
 import styles from './full-info.module.css';
 
 import cn from 'clsx';
+import { useMemo } from 'react';
 import { PlayerPlayingState } from '@demo-video-app/player/src/public-api';
 import { useApi } from '../../utils/use-api';
 import { Banner } from '../banner/banner';
 import { TextProgress } from '../text-progress/text-progress';
-import { useFlags } from '@demo-video-app/client/src/utils/use-flags';
-import { useMemo } from 'react';
-import { Fake } from '@demo-video-app/client/src/components/fake/fake';
+import { useFlags } from '../../utils/use-flags';
+import { Fake } from '../fake/fake';
 
 interface FullInfo {
   id: string;

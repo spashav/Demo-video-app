@@ -7,12 +7,12 @@ import {
   PlayerState,
   VideoSource,
 } from '@demo-video-app/player/src/public-api';
+import type { PlayerLib } from '../../global-lib-bundle/player-lib';
 import { useApi } from '../../utils/use-api';
 import { Card } from '../card/card';
 import { useFlags } from '../../utils/use-flags';
 import { Fake } from '../fake/fake';
 import { videoSourceCache } from '../../utils/api-cache';
-import { PlayerLib } from '../../utils/player-lib';
 
 interface RelatedItem {
   id: string;

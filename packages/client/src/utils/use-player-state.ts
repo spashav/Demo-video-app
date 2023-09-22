@@ -1,4 +1,4 @@
-import { PlayerLib, PlayerLibState } from './player-lib';
+import type { PlayerLib, PlayerLibState } from '../global-lib-bundle/player-lib';
 import { useEffect, useState } from 'react';
 
 export const usePlayerState = <StateKey extends keyof PlayerLibState>(

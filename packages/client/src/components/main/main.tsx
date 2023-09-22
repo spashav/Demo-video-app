@@ -6,12 +6,10 @@ import cn from 'clsx';
 import { Swiper as SwiperClass } from 'swiper/types';
 import { VideoSource } from '@demo-video-app/player/src/public-api';
 import { useApi } from '../../utils/use-api';
-import { pageLib } from '../../utils/pages';
-import { logMetric } from '../../utils/log-metric';
 import { Swiper } from '../swiper/swiper';
 import { useFlags } from '../../utils/use-flags';
 import { videoSourceCache } from '../../utils/api-cache';
-import { PlayerLib } from '../../utils/player-lib';
+import { GlobalLib } from '../../types/global-lib';
 
 import { ReactComponent as Icon1 } from '../../assets/nav-1.svg';
 import { ReactComponent as Icon2 } from '../../assets/nav-2.svg';
@@ -28,7 +26,7 @@ interface FeedItem {
   duration: number;
   playerConfig?: VideoSource;
 }
-export function Main({ playerApi }: { playerApi: PlayerLib }) {
+export function Main({ globalLib }: { globalLib: GlobalLib }) {
   const { usePreloadAndDelayedRelated, disableIframe } = useFlags();
   const [searchParams] = useSearchParams();
   const linkToMain = `/?${searchParams.toString()}`;
@@ -37,13 +35,13 @@ export function Main({ playerApi }: { playerApi: PlayerLib }) {
 
   useEffect(() => {
     if (usePreloadAndDelayedRelated) {
-      playerApi.preloadResources({ disableIframe });
+      globalLib.getPlayerLib().preloadResources({ disableIframe });
     }
-  }, [usePreloadAndDelayedRelated, playerApi]);
+  }, [usePreloadAndDelayedRelated, globalLib]);
 
   const handleItemClick = useCallback((id: string) => {
-    logMetric('Click related', id);
-    pageLib.startPage();
+    globalLib.logMetric('Click related', id);
+    globalLib.getPageLib().startPage();
   }, []);
   useEffect(() => {
     related.response?.forEach(

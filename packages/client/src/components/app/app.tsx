@@ -4,12 +4,9 @@ import { useEffect, useState } from 'react';
 import { Link, Route, Routes, useSearchParams } from 'react-router-dom';
 import { Main } from '../main/main';
 import { Watch } from '../watch/watch';
-import { pageLib } from '../../utils/pages';
-import { PlayerLib } from '../../utils/player-lib';
 import { ReactComponent as PlusIcon } from '../../assets/plus.svg';
 import { ReactComponent as BurgerIcon } from '../../assets/burger.svg';
-
-pageLib.startPage();
+import { getGlobalLib } from '../../utils/get-global-lib';
 
 const hardWork = (count: number) => {
   return;
@@ -28,10 +25,13 @@ if (typeof window !== 'undefined') {
 
 export function App() {
   const [searchParams] = useSearchParams();
-  const [playerApi] = useState(() => new PlayerLib());
+  const [globalLib] = useState(() => getGlobalLib());
+  useEffect(() => {
+    globalLib.getPageLib().startPage();
+  }, [])
   useEffect(() => {
     addEventListener('popstate', () => {
-      pageLib.startPage();
+      globalLib.getPageLib().startPage();
     });
   }, []);
   return (
@@ -60,8 +60,8 @@ export function App() {
         </Routes>
       </div>
       <Routes>
-        <Route path="/" element={<Main playerApi={playerApi} />} />
-        <Route path="/watch/:id" element={<Watch playerApi={playerApi} />} />
+        <Route path="/" element={<Main globalLib={globalLib} />} />
+        <Route path="/watch/:id" element={<Watch globalLib={globalLib} />} />
       </Routes>
     </div>
   );

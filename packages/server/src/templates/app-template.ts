@@ -33,6 +33,7 @@ const getCommonTemplate = async (req: Request, appState: InitialClientState = {}
     'styles.js',
     'vendor.js',
     ...(playerResources?.js || ['player_loader.js']),
+    'inline_lib.js',
     'main.js',
   ];
   const styles = [
