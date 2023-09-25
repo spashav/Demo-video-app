@@ -36,7 +36,6 @@ const getCommonTemplate = async (
 
   const inlineScripts = [
     'runtime.js',
-    ...(playerResources?.js || ['player_loader.js']),
     'inline_lib.js',
   ];
 
@@ -62,6 +61,24 @@ const getCommonTemplate = async (
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script>
+    (() => {
+      function loadScript(url) {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+
+          script.src = url;
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = reject;
+
+          document.head.appendChild(script);
+        })
+      }
+      const scripts = [${(playerResources?.js || ['player_loader.js']).map(s => `"${s}"`).join(', ')}];
+      window.playerScriptsPromise = Promise.all(scripts.map(loadScript))
+    })()
+    </script>
     ${styles
       .map((style) => `<link rel="stylesheet" href="${style}" />`)
       .join('\n')}

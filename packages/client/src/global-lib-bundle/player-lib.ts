@@ -17,8 +17,9 @@ export interface PlayerLibState {
   playerState: PlayerState;
 }
 
-interface WindowWithHiddenState {
+interface WindowWithHiddenStateAndScriptsPromise {
   isHiddenWhileLoad: boolean;
+  playerScriptsPromise: Promise<void>;
 }
 
 const initialState: PlayerLibState = {
@@ -94,6 +95,8 @@ export class PlayerLib {
     backgroundColor?: string;
     disableLoader?: boolean;
   }) => {
+    const win = window as unknown as WindowWithHiddenStateAndScriptsPromise;
+    await win.playerScriptsPromise;
     const api = await getPlayerPublicApi().init({
       id,
       container,
@@ -118,19 +121,20 @@ export class PlayerLib {
       ),
       api.onPlayerStateChange((playerState) => {
         this.setState('playerState', playerState);
-        if (playerState === PlayerState.INITED || playerState === PlayerState.DESTROYED) {
+        if (
+          playerState === PlayerState.INITED ||
+          playerState === PlayerState.DESTROYED
+        ) {
           this.loadScripts(scripts);
-          scripts = []
+          scripts = [];
         }
       }),
       api.onError(({ msg }) => logError(msg)),
       api.onContentImpression(() => {
-        const windowWithHiddenState =
-          window as unknown as WindowWithHiddenState;
         const time = performance.now();
         const { time: startTime, isFirst } = pageLib.getCurrent();
         if (isFirst) {
-          !windowWithHiddenState.isHiddenWhileLoad &&
+          !win.isHiddenWhileLoad &&
             logMetric('First start', time);
         } else {
           logMetric('Spa start', time - startTime);
