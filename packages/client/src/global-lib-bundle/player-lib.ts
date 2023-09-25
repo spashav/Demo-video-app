@@ -8,6 +8,7 @@ import {
 import { logError } from './log-error';
 import { pageLib } from './pages';
 import { logMetric } from './log-metric';
+import { loadScript } from './load-script';
 
 export interface PlayerLibState {
   currentTime: number;
@@ -20,13 +21,15 @@ interface WindowWithHiddenState {
   isHiddenWhileLoad: boolean;
 }
 
+const initialState: PlayerLibState = {
+  currentTime: 0,
+  duration: 0,
+  playingState: PlayerPlayingState.NOT_STARTED,
+  playerState: PlayerState.NOT_INITED,
+};
+
 export class PlayerLib {
-  private state: PlayerLibState = {
-    currentTime: 0,
-    duration: 0,
-    playingState: PlayerPlayingState.NOT_STARTED,
-    playerState: PlayerState.NOT_INITED,
-  };
+  private state: PlayerLibState = initialState;
   private api?: PlayerIframeApi;
   private playerApiUnsubscribeCallbacks: Array<() => void> = [];
   private stateChangeSubscriptions: Partial<{
@@ -48,6 +51,10 @@ export class PlayerLib {
       [...callbacks].forEach((cb) => cb(state));
     }
   };
+
+  public getInitialState = <StateKey extends keyof PlayerLibState>(
+    key: StateKey
+  ) => initialState[key];
 
   public getState = <StateKey extends keyof PlayerLibState>(key: StateKey) =>
     this.state[key];
@@ -73,11 +80,15 @@ export class PlayerLib {
     disableIframe,
     id,
     videoSource,
+    coverSelector,
+    scripts,
   }: {
     container: string;
     id: string;
     disableIframe: boolean;
     videoSource?: VideoSource;
+    coverSelector?: string;
+    scripts?: string[];
   }) => {
     const api = await getPlayerPublicApi().init({
       id,
@@ -94,9 +105,13 @@ export class PlayerLib {
       api.onPlayingStateChange((playingState) =>
         this.setState('playingState', playingState)
       ),
-      api.onPlayerStateChange((playerState) =>
-        this.setState('playerState', playerState)
-      ),
+      api.onPlayerStateChange((playerState) => {
+        this.setState('playerState', playerState);
+        if (playerState === PlayerState.INITED || playerState === PlayerState.DESTROYED) {
+          this.loadScripts(scripts);
+          scripts = []
+        }
+      }),
       api.onError(({ msg }) => logError(msg)),
       api.onContentImpression(() => {
         const windowWithHiddenState =
@@ -111,6 +126,11 @@ export class PlayerLib {
         }
       }),
     ];
+    const coverElem =
+      coverSelector && document.querySelector<HTMLDivElement>(coverSelector);
+    if (coverElem) {
+      coverElem.style.display = 'none';
+    }
   };
 
   public destroy = () => {
@@ -122,5 +142,9 @@ export class PlayerLib {
     getPlayerPublicApi().loadResources?.({
       disableIframe,
     });
+  };
+
+  private loadScripts = (scripts: string[] = []) => {
+    return Promise.all(scripts.map((script) => loadScript(script)));
   };
 }

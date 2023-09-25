@@ -27,7 +27,7 @@ export function App() {
   const [searchParams] = useSearchParams();
   const [globalLib] = useState(() => getGlobalLib());
   useEffect(() => {
-    globalLib.getPageLib().startPage();
+    globalLib.getPageLib().startFirstPage();
   }, [])
   useEffect(() => {
     addEventListener('popstate', () => {

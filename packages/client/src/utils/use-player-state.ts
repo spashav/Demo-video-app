@@ -5,8 +5,11 @@ export const usePlayerState = <StateKey extends keyof PlayerLibState>(
   playerLib: PlayerLib,
   key: StateKey
 ) => {
-  const [value, setValue] = useState(playerLib.getState(key));
+  const [value, setValue] = useState(playerLib.getInitialState(key));
   useEffect(() => {
+    if (value !== playerLib.getState(key)) {
+      setValue(playerLib.getState(key))
+    }
     return playerLib.subscribeOnStateChange(key, setValue);
   }, [playerLib]);
   return value;

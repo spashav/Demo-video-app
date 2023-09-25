@@ -37,8 +37,28 @@ export function Player({
 
   return (
     <div className={cn(className, styles.playerCont)}>
-      <div className={styles.player} id={CONTAINER_ID}></div>
-      {useFake && !isPlayerReady && <div className={styles.cover} />}
+      <div
+        className={styles.player}
+        id={CONTAINER_ID}
+        suppressHydrationWarning={true}
+        dangerouslySetInnerHTML={{ __html: '' }}
+      ></div>
+      {useFake && !isPlayerReady && <div className={styles.cover} suppressHydrationWarning={true} />}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.INLINE_LIB.getPageLib().startFirstPage();
+            window.APP_STATE.videoSource && window.INLINE_LIB.getPlayerLib().init({
+              id: "${id}",
+              container: "${CONTAINER_ID}",
+              disableIframe: ${disableIframe},
+              videoSource: window.APP_STATE.videoSource,
+              coverSelector: ".${styles.cover}",
+              scripts: window.APP_STATE.playerScripts,
+            });
+          `,
+        }}
+      ></script>
     </div>
   );
 }

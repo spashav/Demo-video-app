@@ -5,6 +5,7 @@ const { withReact } = require('@nx/react');
 // Nx plugins for webpack.
 module.exports = composePlugins(withNx(), withReact(), (config) => {
   if (config.target === 'web') {
+    config.output.scriptType = false
     config.entry.inline_lib = path.resolve(__dirname, './src/entry/inline-lib.ts')
     // Версии api плеера при подключении без iframe (реализация плеера)
     config.entry.player_v1 = path.resolve(__dirname, '../player/src/entry/player-v1.tsx')
