@@ -1,7 +1,7 @@
 {
   "name": "client",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/client/src",
+  "sourceRoot": "packages",
   "projectType": "application",
   "targets": {
     "build": {
@@ -90,6 +90,9 @@
         "main": "packages/client/src/entry/server.ts",
         "outputPath": "dist/packages/client/server",
         "outputFileName": "server.js",
+        "assets": [
+          "packages/server/src/server-assets"
+        ],
         "tsConfig": "packages/client/tsconfig.server.json",
         "compiler": "babel",
         "externalDependencies": "all",

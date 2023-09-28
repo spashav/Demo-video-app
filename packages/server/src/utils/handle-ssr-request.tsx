@@ -5,14 +5,18 @@ import isbot from 'isbot';
 import { StaticRouter } from 'react-router-dom/server';
 import { ComponentType } from 'react';
 import { FlagsContextProvider } from '@demo-video-app/client/src/utils/use-flags';
+import { VideoSourceCacheContextProvider } from '@demo-video-app/client/src/utils/api-cache';
+import { InitialClientState } from '@demo-video-app/client/src/types/initial-client-state';
 
 export function handleSsrRequest(
-  template: (req: Request) => Promise<string>,
+  template: (
+    req: Request
+  ) => Promise<{ templateStr: string; appState: InitialClientState }>,
   Comp: ComponentType
 ) {
   return async function render(req: Request, res: Response) {
     let didError = false;
-    const templateStr = await template(req)
+    const { templateStr, appState } = await template(req);
 
     const [htmlStart, htmlEnd] = templateStr.split(`<div id="root"></div>`);
 
@@ -25,7 +29,9 @@ export function handleSsrRequest(
     const stream = ReactDOMServer.renderToPipeableStream(
       <StaticRouter location={req.originalUrl}>
         <FlagsContextProvider req={req}>
-          <Comp />
+          <VideoSourceCacheContextProvider initialState={appState}>
+            <Comp />
+          </VideoSourceCacheContextProvider>
         </FlagsContextProvider>
       </StaticRouter>,
       {

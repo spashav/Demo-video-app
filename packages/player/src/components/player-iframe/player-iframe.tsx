@@ -13,10 +13,12 @@ export function PlayerIframe({
   initialContentId,
   initialSource,
   playerApi,
+  backgroundColor,
 }: {
   initialContentId: string;
   initialSource?: VideoSource;
   playerApi: PlayerApiInnerIframe;
+  backgroundColor?: string;
 }) {
   const [id, setId] = useState<string>(initialContentId);
   const [source, setSource] = useState<VideoSource | undefined>(initialSource);
@@ -35,5 +37,10 @@ export function PlayerIframe({
   if (!id) {
     return <div>Empty id or version in url</div>;
   }
-  return <Player overridePlayerApi={playerApi} videoConfig={{ id, source }} />;
+  return (
+    <Player
+      overridePlayerApi={playerApi}
+      videoConfig={{ id, source, backgroundColor }}
+    />
+  );
 }

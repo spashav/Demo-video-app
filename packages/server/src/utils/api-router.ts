@@ -8,6 +8,9 @@ interface Source {
     // Картинка для превью в плеере
     poster: string;
     type: string;
+    // Время начала проигрывания видео (чтобы можно было показать первый кадр. и для разнообразия превью)
+    startTime: number;
+    firstFrame: string;
   };
   //Картинка для превью в ленте
   cover: string;
@@ -21,9 +24,11 @@ interface Source {
 const sources: Source[] = [
   {
     playerConfig: {
-      src: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/master.m3u8',
+      src: 'https://storage.googleapis.com/shaka-demo-assets/bbb-dark-truths-hls/hls.m3u8',
       poster: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
       type: 'application/x-mpegURL',
+      startTime: 0,
+      firstFrame: 'server-assets/first-frames/0_0.webp',
     },
     cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
     title: 'Видео о зайце',
@@ -70,15 +75,17 @@ const sources: Source[] = [
         text: 'Заяц от 87.5% до 100%',
       },
     ],
-    duration: 635 * 1e3,
+    duration: 372.333 * 1e3,
     genre: 'Кулинария',
   },
   {
     playerConfig: {
-      src: 'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/playlist.m3u8',
+      src: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
       poster:
         'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
       type: 'application/x-mpegURL',
+      startTime: 0,
+      firstFrame: 'server-assets/first-frames/1_0.webp'
     },
     cover:
       'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
@@ -109,14 +116,30 @@ const sources: Source[] = [
   },
 ];
 
+const getStartTimeAndFirstFrame = (duration: number, index: number) => {
+  const startTimeCount = 8;
+  const timeShiftPosition = Math.floor(index / sources.length) % startTimeCount;
+  const timeShiftRatio = timeShiftPosition / startTimeCount
+
+  return {
+    startTime: Math.floor(timeShiftRatio * duration),
+    firstFrame: `server-assets/first-frames/${index % sources.length}_${Math.ceil(100 * timeShiftRatio)}.webp`,
+  }
+};
+
 const getSource = <Keys extends keyof Source>(
   index: number,
   filter: Set<Keys>
 ) => {
+  const source = {
+    ...sources[index % sources.length],
+  };
+  source.playerConfig = {
+    ...source.playerConfig,
+    ...getStartTimeAndFirstFrame(source.duration, index),
+  };
   return Object.fromEntries(
-    Object.entries(sources[index % sources.length]).filter(([key]) =>
-      filter.has(key as Keys)
-    )
+    Object.entries(source).filter(([key]) => filter.has(key as Keys))
   ) as Pick<Source, Keys>;
 };
 

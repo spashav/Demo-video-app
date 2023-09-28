@@ -10,6 +10,7 @@ interface VideoConfig {
   autoplay?: boolean;
   id: string;
   source?: VideoSource;
+  backgroundColor?: string;
 }
 
 export const Player: FC<{
@@ -26,6 +27,9 @@ export const Player: FC<{
     if (source && source.id === videoConfig.id) {
       return;
     }
+    if (videoConfig?.source.id === videoConfig.id) {
+      return setSource(videoConfig.source);
+    }
     const fetchConfig = async () => {
       const res = await fetch(`/api/player_config/${videoConfig.id}`);
       const config = await res.json();
@@ -37,6 +41,7 @@ export const Player: FC<{
   const initOptions = useMemo<InitOptions>(
     () => ({
       sources: source ? [source] : [],
+      backgroundColor: videoConfig.backgroundColor,
       autoplay: 'any',
     }),
     [source]

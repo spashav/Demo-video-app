@@ -28,7 +28,7 @@ export function App() {
   const [globalLib] = useState(() => getGlobalLib());
   useEffect(() => {
     globalLib.getPageLib().startFirstPage();
-  }, [])
+  }, []);
   useEffect(() => {
     addEventListener('popstate', () => {
       globalLib.getPageLib().startPage();

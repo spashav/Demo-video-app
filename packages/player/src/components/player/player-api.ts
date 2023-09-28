@@ -6,18 +6,25 @@ import {
   PlayerState,
 } from '../../public-api';
 import { eventEmitter } from '../../utils/event-emitter';
+import { captureFirstFrames } from '@demo-video-app/player/src/components/player/capture-first-frame';
 
 export interface InitOptions {
   autoplay?: boolean | 'play' | 'muted' | 'any';
+  backgroundColor?: string
   sources: {
     src: string;
     type: string;
-    poster: string;
+    id: string;
+    poster?: string;
+    startTime?: number;
   }[];
 }
 
+const isCaptureFirstFramesEnabled = false;
+
 export class PlayerApi implements PlayerPublicApi {
   private videoJsRef: VideoJsPlayerApi | null = null;
+  private source: InitOptions['sources'][number] | null = null;
 
   private contentImpression = eventEmitter<{ isAutoplay: boolean }>();
   public onContentImpression = this.contentImpression.on;
@@ -33,7 +40,7 @@ export class PlayerApi implements PlayerPublicApi {
   public getPlayerState = this.playerState.getLastEventParams;
 
   private playingState = eventEmitter<PlayerPlayingState>(
-    PlayerPlayingState.NOT_STARTED,
+    PlayerPlayingState.NOT_STARTED
   );
   public onPlayingStateChange = this.playingState.on;
 
@@ -50,11 +57,13 @@ export class PlayerApi implements PlayerPublicApi {
 
   public setSource = (options: InitOptions, videoRef: HTMLDivElement) => {
     this.isContentImpressionEmitted = false;
+    this.source = options.sources[0];
     this.playerState.emit(PlayerState.INITIALIZING);
     if (!this.videoJsRef) {
       const videoElement = document.createElement('video-js');
       videoElement.style.height = '100%';
       videoElement.style.width = '100%';
+      videoElement.style.backgroundColor = options.backgroundColor || '#000';
 
       videoElement.classList.add('vjs-big-play-centered');
       videoRef.appendChild(videoElement);
@@ -69,7 +78,13 @@ export class PlayerApi implements PlayerPublicApi {
           this.playerReady.emit();
         }
       ));
-      player.poster(options.sources[0].poster);
+      player.on('loadedmetadata', () => {
+        if (this.source?.startTime) {
+          player.currentTime(this.source.startTime / 1e3);
+        }
+      });
+
+      player.poster(this.source.poster);
       player.on('timeupdate', () => {
         this.currentTime.emit({
           time: player.currentTime() || 0,
@@ -100,6 +115,20 @@ export class PlayerApi implements PlayerPublicApi {
         }
         this.isContentImpressionEmitted = true;
         this.contentImpression.emit({ isAutoplay: true });
+        if (!isCaptureFirstFramesEnabled) {
+          return;
+        }
+        const video = videoRef.querySelector('video')!;
+        const duration = player.duration() || 0;
+        const startTime = this.source?.startTime || 0;
+        const startRatio = Math.ceil(startTime / (10 * duration));
+        const id = parseInt(this.source?.id ?? '', 10) % 2;
+
+        captureFirstFrames({
+          video,
+          fileName: `${id}_${startRatio}`,
+          quality: 0.6,
+        });
       });
       player.on('ended', () => {
         this.playingState.emit(PlayerPlayingState.ENDED);
@@ -110,6 +139,7 @@ export class PlayerApi implements PlayerPublicApi {
 
       player.autoplay(options.autoplay);
       player.src(options.sources);
+      player.poster(this.source.poster);
     }
   };
 

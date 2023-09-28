@@ -15,6 +15,14 @@ const port = process.env['PORT'] || 4200;
 const app = express();
 
 const browserDist = path.join(process.cwd(), 'dist/packages/client/browser');
+const faviconDist = path.join(
+  process.cwd(),
+  'dist/packages/client/browser/client/src/assets/favicon.ico'
+);
+const serverAssetsDist = path.join(
+  process.cwd(),
+  'dist/packages/client/server/server/src'
+);
 
 app.use(cors());
 
@@ -34,6 +42,20 @@ app.use('/player_loader.js', (req, res) => {
   });
 });
 
+app.get(
+  'favicon.ico',
+  express.static(faviconDist, {
+    maxAge: '1y',
+  })
+);
+
+app.get(
+  '/server-assets/*',
+  express.static(serverAssetsDist, {
+    fallthrough: false,
+    maxAge: '1y',
+  })
+);
 app.get(
   '*.*',
   express.static(browserDist, {

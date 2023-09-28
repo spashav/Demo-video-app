@@ -20,8 +20,10 @@ export enum PlayerPlayingState {
 export interface VideoSource {
   src: string;
   type: string;
-  poster: string;
+  poster?: string;
   id: string;
+  startTime: number;
+  firstFrame: string;
 }
 
 export enum PlayerState {
@@ -70,6 +72,7 @@ type InitPlayer<Api extends PlayerIframeApi | PlayerPublicApi> = (props: {
   id: string;
   container: string;
   disableIframe?: boolean;
+  backgroundColor?: string;
   videoSource?: VideoSource;
 }) => Promise<Api>;
 

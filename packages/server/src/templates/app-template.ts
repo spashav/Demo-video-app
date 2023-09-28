@@ -48,7 +48,12 @@ const getCommonTemplate = async (
     ...(playerResources?.css || []),
   ];
 
-  return `
+  const appStateWithPlayerScripts = {
+    ...appState,
+    playerScripts: isPlayerInlineInit ? scripts : [],
+  }
+
+  const templateStr = `
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -81,10 +86,7 @@ const getCommonTemplate = async (
     </script>
     <script>
       window.APP_STATE = ${escapeHtmlEntities(
-        JSON.stringify({
-          ...appState,
-          playerScripts: isPlayerInlineInit ? scripts : [],
-        })
+        JSON.stringify(appStateWithPlayerScripts)
       )}
     </script>
 
@@ -99,4 +101,8 @@ const getCommonTemplate = async (
   </body>
 </html>
 `;
+  return {
+    templateStr,
+    appState: appStateWithPlayerScripts,
+  }
 };

@@ -8,7 +8,7 @@ import { VideoSource } from '@demo-video-app/player/src/public-api';
 import { useApi } from '../../utils/use-api';
 import { Swiper } from '../swiper/swiper';
 import { useFlags } from '../../utils/use-flags';
-import { videoSourceCache } from '../../utils/api-cache';
+import { useVideoSourceCache } from '../../utils/api-cache';
 import { GlobalLib } from '../../types/global-lib';
 
 import { ReactComponent as Icon1 } from '../../assets/nav-1.svg';
@@ -28,6 +28,7 @@ interface FeedItem {
 }
 export function Main({ globalLib }: { globalLib: GlobalLib }) {
   const { usePreloadAndDelayedRelated, disableIframe } = useFlags();
+  const videoSourceCache = useVideoSourceCache()
   const [searchParams] = useSearchParams();
   const linkToMain = `/?${searchParams.toString()}`;
   const related = useApi<FeedItem[]>({ apiUrl: `/feed` });

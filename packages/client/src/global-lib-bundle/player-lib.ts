@@ -80,21 +80,29 @@ export class PlayerLib {
     disableIframe,
     id,
     videoSource,
-    coverSelector,
     scripts,
+    useFirstFrame,
+    backgroundColor,
   }: {
     container: string;
     id: string;
     disableIframe: boolean;
     videoSource?: VideoSource;
-    coverSelector?: string;
     scripts?: string[];
+    useFirstFrame?: boolean;
+    backgroundColor?: string;
   }) => {
     const api = await getPlayerPublicApi().init({
       id,
       container,
       disableIframe,
-      videoSource,
+      backgroundColor,
+      videoSource: videoSource
+        ? {
+            ...videoSource,
+            poster: useFirstFrame ? undefined : videoSource.poster,
+          }
+        : undefined,
     });
     this.api = api;
 
@@ -126,11 +134,6 @@ export class PlayerLib {
         }
       }),
     ];
-    const coverElem =
-      coverSelector && document.querySelector<HTMLDivElement>(coverSelector);
-    if (coverElem) {
-      coverElem.style.display = 'none';
-    }
   };
 
   public destroy = () => {

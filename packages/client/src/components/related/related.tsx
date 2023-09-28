@@ -12,7 +12,7 @@ import { useApi } from '../../utils/use-api';
 import { Card } from '../card/card';
 import { useFlags } from '../../utils/use-flags';
 import { Fake } from '../fake/fake';
-import { videoSourceCache } from '../../utils/api-cache';
+import { useVideoSourceCache } from '../../utils/api-cache';
 
 interface RelatedItem {
   id: string;
@@ -31,6 +31,7 @@ export function Related({
   onClick: (id: string) => void;
 }) {
   const { useFake, usePreloadAndDelayedRelated } = useFlags();
+  const videoSourceCache = useVideoSourceCache()
 
   const awaitPlayerLoadPromise = useMemo(() => {
     if (!usePreloadAndDelayedRelated) {

@@ -11,7 +11,7 @@ import { GlobalLib } from '../../types/global-lib';
 
 export function Watch({ globalLib }: { globalLib: GlobalLib }) {
   const { id } = useParams();
-  const playerApi = globalLib.getPlayerLib()
+  const playerApi = globalLib.getPlayerLib();
   const duration = usePlayerState(playerApi, 'duration');
   const currentTime = usePlayerState(playerApi, 'currentTime');
   const playingState = usePlayerState(playerApi, 'playingState');

@@ -3,7 +3,7 @@ import styles from './player.module.css';
 import { useEffect, useState } from 'react';
 import cn from 'clsx';
 import { useFlags } from '../../utils/use-flags';
-import { videoSourceCache } from '../../utils/api-cache';
+import { useVideoSourceCache } from '../../utils/api-cache';
 import type { PlayerLib } from '../../global-lib-bundle/player-lib';
 
 const CONTAINER_ID = '#player';
@@ -17,33 +17,41 @@ export function Player({
   className: string;
   playerApi: PlayerLib;
 }) {
-  const [isPlayerReady, setIsPlayerReady] = useState(false);
-  const { useFake, disableIframe } = useFlags();
+  const videoSourceCache = useVideoSourceCache();
+  const videoSource = videoSourceCache.get(id);
+  const { useFake, disableIframe, useDelayedApp } = useFlags();
   useEffect(() => {
     if (!id) {
       return;
     }
     const videoSource = videoSourceCache.get(id);
-    setIsPlayerReady(false);
     playerApi
       .init({
         id,
         container: CONTAINER_ID,
         disableIframe,
+        useFirstFrame: Boolean(useDelayedApp),
         videoSource,
-      })
-      .then(() => setIsPlayerReady(true));
+        backgroundColor: useFake ? 'transparent' : undefined,
+      });
   }, [id]);
 
   return (
     <div className={cn(className, styles.playerCont)}>
+      {useFake && <div
+        className={styles.cover}
+        style={
+          useDelayedApp && videoSource
+            ? { backgroundImage: `url("${videoSource.firstFrame}")` }
+            : {}
+        }
+      />}
       <div
         className={styles.player}
         id={CONTAINER_ID}
         suppressHydrationWarning={true}
         dangerouslySetInnerHTML={{ __html: '' }}
       ></div>
-      {useFake && !isPlayerReady && <div className={styles.cover} suppressHydrationWarning={true} />}
       <script
         dangerouslySetInnerHTML={{
           __html: `
@@ -53,8 +61,9 @@ export function Player({
               container: "${CONTAINER_ID}",
               disableIframe: ${disableIframe},
               videoSource: window.APP_STATE.videoSource,
-              coverSelector: ".${styles.cover}",
               scripts: window.APP_STATE.playerScripts,
+              useFirstFrame: "${useDelayedApp}",
+              backgroundColor: ${useFake ? '"transparent"' : 'undefined'},
             });
           `,
         }}
