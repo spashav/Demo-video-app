@@ -95,20 +95,20 @@ export function Related({
   return (
     <div className={cn(className, styles.related)}>
       <div className={styles.title}>Рекомендации</div>
+      <div className={styles.fakes}>{fakes}</div>
       {isChunkedRendering ? START_SECOND_CHUNK : ''}
-      {!related.isLoading
-        ? related.response.map(({ id, cover }) => (
-            <Card
-              cover={cover}
-              id={id}
-              key={id}
-              className={styles.card}
-              onClick={onClick}
-              ratio={0.6122}
-              withPreload={useFake && !related.isInitial}
-            />
-          ))
-        : fakes}
+      {!related.isLoading &&
+        related.response.map(({ id, cover }) => (
+          <Card
+            cover={cover}
+            id={id}
+            key={id}
+            className={styles.card}
+            onClick={onClick}
+            ratio={0.6122}
+            withPreload={useFake && !related.isInitial}
+          />
+        ))}
       {isChunkedRendering ? FINISH_SECOND_CHUNK : ''}
     </div>
   );
