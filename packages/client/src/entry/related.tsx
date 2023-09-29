@@ -12,7 +12,7 @@ export const RelatedSecondChunk = ({ id, related }: { id: string; related: Initi
       onClick={() => {}}
       className={''}
       id={id}
-      playerApi={globalLib.getPlayerLib()}
+      globalLib={globalLib}
     />
   );
 };

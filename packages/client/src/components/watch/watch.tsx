@@ -46,7 +46,7 @@ export function Watch({ globalLib }: { globalLib: GlobalLib }) {
       </div>
       <Related
         id={id}
-        playerApi={playerApi}
+        globalLib={globalLib}
         className={styles.related}
         initialRelated={initialRelatedRef.current}
         onClick={handleRelatedClick}

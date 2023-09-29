@@ -14,6 +14,7 @@ import { useFlags } from '../../utils/use-flags';
 import { Fake } from '../fake/fake';
 import { useVideoSourceCache } from '../../utils/api-cache';
 import { InitialClientState } from '../../types/initial-client-state';
+import { GlobalLib } from '@demo-video-app/client/src/types/global-lib';
 
 export const START_SECOND_CHUNK = '__START_SECOND_CHUNK__';
 export const FINISH_SECOND_CHUNK = '__FINISH_SECOND_CHUNK__';
@@ -26,13 +27,13 @@ interface RelatedItem {
 export function Related({
   id,
   className,
-  playerApi,
+  globalLib,
   onClick,
   initialRelated,
 }: {
   id: string;
   className: string;
-  playerApi: PlayerLib;
+  globalLib: GlobalLib;
   onClick: (id: string) => void;
   initialRelated?: InitialClientState['related'];
 }) {
@@ -51,6 +52,7 @@ export function Related({
       return Promise.resolve();
     }
     return new Promise<void>((resolve) => {
+      const playerApi = globalLib.getPlayerLib();
       const check = () => {
         const state = playerApi.getState('playerState');
         if (state === PlayerState.INITED || state === PlayerState.DESTROYED) {
@@ -61,7 +63,7 @@ export function Related({
       let unsubscribe = playerApi.subscribeOnStateChange('playerState', check);
       check();
     });
-  }, [id, playerApi]);
+  }, [id, globalLib]);
 
   const related = useApi<RelatedItem[]>({
     apiUrl: `/related?id=${id}`,
@@ -70,10 +72,13 @@ export function Related({
   });
 
   useEffect(() => {
-    related.response?.forEach(
-      ({ id, playerConfig }) =>
-        playerConfig && videoSourceCache.set(id, playerConfig)
-    );
+    if (!related.isLoading) {
+      globalLib.logRelatedFirstRender();
+      related.response.forEach(
+        ({ id, playerConfig }) =>
+          playerConfig && videoSourceCache.set(id, playerConfig)
+      );
+    }
   }, [related.response]);
 
   const fakes = useMemo(() => {
@@ -110,6 +115,13 @@ export function Related({
           />
         ))}
       {isChunkedRendering ? FINISH_SECOND_CHUNK : ''}
+      {useDelayedApp && useChunkedRendering && (
+        <script
+          dangerouslySetInnerHTML={{
+            __html: 'window.INLINE_LIB.logRelatedFirstRender();',
+          }}
+        ></script>
+      )}
     </div>
   );
 }

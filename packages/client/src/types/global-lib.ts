@@ -8,4 +8,5 @@ export interface GlobalLib {
   logError: typeof logError;
   getPageLib: () => typeof pageLib;
   logMetric: typeof logMetric;
+  logRelatedFirstRender: () => void;
 }
