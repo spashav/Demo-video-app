@@ -13,6 +13,10 @@ import { Card } from '../card/card';
 import { useFlags } from '../../utils/use-flags';
 import { Fake } from '../fake/fake';
 import { useVideoSourceCache } from '../../utils/api-cache';
+import { InitialClientState } from '../../types/initial-client-state';
+
+export const START_SECOND_CHUNK = '__START_SECOND_CHUNK__';
+export const FINISH_SECOND_CHUNK = '__FINISH_SECOND_CHUNK__';
 
 interface RelatedItem {
   id: string;
@@ -24,14 +28,23 @@ export function Related({
   className,
   playerApi,
   onClick,
+  initialRelated,
 }: {
   id: string;
   className: string;
   playerApi: PlayerLib;
   onClick: (id: string) => void;
+  initialRelated?: InitialClientState['related'];
 }) {
-  const { useFake, usePreloadAndDelayedRelated } = useFlags();
-  const videoSourceCache = useVideoSourceCache()
+  const {
+    useFake,
+    usePreloadAndDelayedRelated,
+    useChunkedRendering,
+    useDelayedApp,
+  } = useFlags();
+  const isChunkedRendering =
+    useDelayedApp && useChunkedRendering && typeof window === 'undefined';
+  const videoSourceCache = useVideoSourceCache();
 
   const awaitPlayerLoadPromise = useMemo(() => {
     if (!usePreloadAndDelayedRelated) {
@@ -53,6 +66,7 @@ export function Related({
   const related = useApi<RelatedItem[]>({
     apiUrl: `/related?id=${id}`,
     awaitPromise: awaitPlayerLoadPromise,
+    initial: initialRelated,
   });
 
   useEffect(() => {
@@ -81,6 +95,7 @@ export function Related({
   return (
     <div className={cn(className, styles.related)}>
       <div className={styles.title}>Рекомендации</div>
+      {isChunkedRendering ? START_SECOND_CHUNK : ''}
       {!related.isLoading
         ? related.response.map(({ id, cover }) => (
             <Card
@@ -90,10 +105,11 @@ export function Related({
               className={styles.card}
               onClick={onClick}
               ratio={0.6122}
-              withPreload={useFake}
+              withPreload={useFake && !related.isInitial}
             />
           ))
         : fakes}
+      {isChunkedRendering ? FINISH_SECOND_CHUNK : ''}
     </div>
   );
 }

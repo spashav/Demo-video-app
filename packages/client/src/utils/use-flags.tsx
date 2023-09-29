@@ -6,12 +6,14 @@ enum FlagKeys {
   disableIframe = 'disableIframe',
   usePreloadAndDelayedRelated = 'usePreloadAndDelayedRelated',
   useDelayedApp = 'useDelayedApp',
+  useChunkedRendering = 'useChunkedRendering',
 }
 interface Flags {
   [FlagKeys.useFake]: boolean;
   [FlagKeys.disableIframe]: boolean;
   [FlagKeys.usePreloadAndDelayedRelated]: boolean;
   [FlagKeys.useDelayedApp]: boolean;
+  [FlagKeys.useChunkedRendering]: boolean;
 }
 
 const defaultFlags: Flags = {
@@ -19,6 +21,7 @@ const defaultFlags: Flags = {
   [FlagKeys.disableIframe]: false,
   [FlagKeys.usePreloadAndDelayedRelated]: false,
   [FlagKeys.useDelayedApp]: false,
+  [FlagKeys.useChunkedRendering]: false,
 };
 
 const flagsContext = createContext<Flags>(defaultFlags);

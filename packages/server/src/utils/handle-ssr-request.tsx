@@ -1,57 +1,77 @@
 import type { Request, Response } from 'express';
 import * as ReactDOMServer from 'react-dom/server';
-import isbot from 'isbot';
 
 import { StaticRouter } from 'react-router-dom/server';
-import { ComponentType } from 'react';
+import { App } from '@demo-video-app/client/src/components/app/app';
 import { FlagsContextProvider } from '@demo-video-app/client/src/utils/use-flags';
 import { VideoSourceCacheContextProvider } from '@demo-video-app/client/src/utils/api-cache';
 import { InitialClientState } from '@demo-video-app/client/src/types/initial-client-state';
+import {
+  START_SECOND_CHUNK,
+  FINISH_SECOND_CHUNK,
+} from '@demo-video-app/client/src/components/related/related';
+import { RelatedSecondChunk } from '@demo-video-app/client/src/entry/related';
+import { escapeHtmlEntities } from '@demo-video-app/server/src/utils/escape-html-entities';
 
 export function handleSsrRequest(
-  template: (
-    req: Request
-  ) => Promise<{ templateStr: string; appState: InitialClientState }>,
-  Comp: ComponentType
+  template: (req: Request) => Promise<{
+    templateStr: string;
+    appState: InitialClientState;
+    getRelated?: () => Promise<any>;
+  }>
 ) {
   return async function render(req: Request, res: Response) {
-    let didError = false;
-    const { templateStr, appState } = await template(req);
+    const { templateStr, appState, getRelated } = await template(req);
 
     const [htmlStart, htmlEnd] = templateStr.split(`<div id="root"></div>`);
 
-    // For bots (e.g. search engines), the content will not be streamed but render all at once.
-    // For users, content should be streamed to the user as they are ready.
-    const callbackName = isbot(req.headers['user-agent'])
-      ? 'onAllReady'
-      : 'onShellReady';
-
-    const stream = ReactDOMServer.renderToPipeableStream(
+    const appStr = ReactDOMServer.renderToString(
       <StaticRouter location={req.originalUrl}>
         <FlagsContextProvider req={req}>
           <VideoSourceCacheContextProvider initialState={appState}>
-            <Comp />
+            <App />
           </VideoSourceCacheContextProvider>
         </FlagsContextProvider>
-      </StaticRouter>,
-      {
-        [callbackName]() {
-          res.statusCode = didError ? 500 : 200;
-          res.setHeader('Content-type', 'text/html; charset=utf-8');
-          res.write(`${htmlStart}<div id="root">`);
-          stream.pipe(res);
-          res.write(`</div>${htmlEnd}`);
-        },
-        onShellError(error) {
-          console.error(error);
-          res.statusCode = 500;
-          res.send('<!doctype html><h1>Server Error</h1>');
-        },
-        onError(error) {
-          didError = true;
-          console.error(error);
-        },
-      }
+      </StaticRouter>
     );
+    res.statusCode = 200;
+    res.setHeader('Content-type', 'text/html; charset=utf-8');
+    res.write(`${htmlStart}<div id="root">`);
+    const [firstChunk, rest] = appStr.split(START_SECOND_CHUNK);
+    const [, thirdChunk] = (rest || '').split(FINISH_SECOND_CHUNK);
+    if (!thirdChunk || !getRelated) {
+      res.write(appStr);
+    } else {
+      res.write(firstChunk);
+      const related = await getRelated();
+      const appStateWithRelated = {
+        ...appState,
+        related,
+      };
+      const { id } = req.params;
+      const relatedStr = ReactDOMServer.renderToString(
+        <StaticRouter location={req.originalUrl}>
+          <FlagsContextProvider req={req}>
+            <VideoSourceCacheContextProvider initialState={appStateWithRelated}>
+              <RelatedSecondChunk id={id} related={related} />
+            </VideoSourceCacheContextProvider>
+          </FlagsContextProvider>
+        </StaticRouter>
+      );
+      const [, rest] = relatedStr.split(START_SECOND_CHUNK);
+      const [secondChunk] = (rest || '').split(FINISH_SECOND_CHUNK);
+      res.write(secondChunk);
+      res.write(thirdChunk);
+      res.write(`
+        <script>
+          window.APP_STATE = {
+            ...window.APP_STATE,
+            related: ${escapeHtmlEntities(JSON.stringify(related))}
+          }
+        </script>
+      `);
+    }
+    res.write(`</div>${htmlEnd}`);
+    res.end();
   };
 }

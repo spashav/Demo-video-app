@@ -5,13 +5,18 @@ import { useSearchParams } from 'react-router-dom';
 export const useApi = <Response>({
   apiUrl,
   awaitPromise = Promise.resolve(),
+  initial,
 }: {
   apiUrl: string;
   awaitPromise?: Promise<void>;
+  initial?: Response;
 }) => {
   const [searchParams] = useSearchParams();
-  const [response, setResponse] = useState<Response | undefined>();
+  const [response, setResponse] = useState<Response | undefined>(initial);
   useEffect(() => {
+    if (initial) {
+      return
+    }
     setResponse(undefined);
     awaitPromise
       .then(() => {
@@ -23,8 +28,8 @@ export const useApi = <Response>({
   }, [apiUrl]);
 
   if (response) {
-    return { response: response as Response, isLoading: false as const };
+    return { response: response as Response, isLoading: false as const, isInitial: true };
   }
 
-  return { response: undefined, isLoading: true as const };
+  return { response: undefined, isLoading: true as const, isInitial: false };
 };

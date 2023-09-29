@@ -28,7 +28,7 @@ export const Player: FC<{
     if (source && source.id === videoConfig.id) {
       return;
     }
-    if (videoConfig?.source.id === videoConfig.id) {
+    if (videoConfig?.source?.id === videoConfig.id) {
       return setSource(videoConfig.source);
     }
     const fetchConfig = async () => {

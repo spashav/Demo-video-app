@@ -10,9 +10,18 @@ export const getWatchTemplate = async (req: Request) => {
   const apiBaseUrl = `http://${req.header('host')}`;
   const { id } = req.params;
   const videoSourceRes = await fetch(`${apiBaseUrl}/api/player_config/${id}`);
+  const queryStr = Object.entries({
+    id,
+    ...req.query,
+  })
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+  const getRelated = () =>
+    fetch(`${apiBaseUrl}/api/related?${queryStr}`).then((res) => res.json());
   const videoSource =
     (await videoSourceRes.json()) as InitialClientState['videoSource'];
-  return getCommonTemplate(req, { videoSource });
+
+  return getCommonTemplate(req, { videoSource }, getRelated);
 };
 export const getMainTemplate = async (req: Request) => {
   return getCommonTemplate(req);
@@ -20,7 +29,8 @@ export const getMainTemplate = async (req: Request) => {
 
 const getCommonTemplate = async (
   req: Request,
-  appState: InitialClientState = {}
+  appState: InitialClientState = {},
+  getRelated?: () => Promise<any>
 ) => {
   let playerResources: { js: string[]; css: string[] } | undefined;
   const apiBaseUrl = `http://${req.header('host')}`;
@@ -34,10 +44,7 @@ const getCommonTemplate = async (
       (await playerResourcesRes.json()) as typeof playerResources;
   }
 
-  const inlineScripts = [
-    'runtime.js',
-    'inline_lib.js',
-  ];
+  const inlineScripts = ['runtime.js', 'inline_lib.js'];
 
   const scripts: string[] = ['styles.js', 'vendor.js', 'main.js'];
   const styles = [
@@ -50,7 +57,7 @@ const getCommonTemplate = async (
   const appStateWithPlayerScripts = {
     ...appState,
     playerScripts: isPlayerInlineInit ? scripts : [],
-  }
+  };
 
   const templateStr = `
 <!DOCTYPE html>
@@ -75,7 +82,9 @@ const getCommonTemplate = async (
           document.head.appendChild(script);
         })
       }
-      const scripts = [${(playerResources?.js || ['player_loader.js']).map(s => `"${s}"`).join(', ')}];
+      const scripts = [${(playerResources?.js || ['player_loader.js'])
+        .map((s) => `"${s}"`)
+        .join(', ')}];
       window.playerScriptsPromise = Promise.all(scripts.map(loadScript))
     })()
     </script>
@@ -121,5 +130,6 @@ const getCommonTemplate = async (
   return {
     templateStr,
     appState: appStateWithPlayerScripts,
-  }
+    getRelated,
+  };
 };

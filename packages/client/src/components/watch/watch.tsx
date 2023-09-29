@@ -1,6 +1,6 @@
 import styles from './watch.module.css';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { useParams } from 'react-router-dom';
 import { Player } from '../player/player';
@@ -8,6 +8,7 @@ import { Related } from '../related/related';
 import { FullInfo } from '../full-info/full-info';
 import { usePlayerState } from '../../utils/use-player-state';
 import { GlobalLib } from '../../types/global-lib';
+import { getInitialClientState } from '../../utils/get-initial-client-state';
 
 export function Watch({ globalLib }: { globalLib: GlobalLib }) {
   const { id } = useParams();
@@ -15,8 +16,11 @@ export function Watch({ globalLib }: { globalLib: GlobalLib }) {
   const duration = usePlayerState(playerApi, 'duration');
   const currentTime = usePlayerState(playerApi, 'currentTime');
   const playingState = usePlayerState(playerApi, 'playingState');
+  const initialRelatedRef = useRef(getInitialClientState().related);
 
   useEffect(() => {
+    initialRelatedRef.current = undefined
+    getInitialClientState().related = undefined
     return () => playerApi.destroy();
   }, []);
 
@@ -44,6 +48,7 @@ export function Watch({ globalLib }: { globalLib: GlobalLib }) {
         id={id}
         playerApi={playerApi}
         className={styles.related}
+        initialRelated={initialRelatedRef.current}
         onClick={handleRelatedClick}
       />
     </div>

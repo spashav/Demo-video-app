@@ -2,7 +2,6 @@ import * as path from 'path';
 import * as express from 'express';
 import * as cors from 'cors';
 
-import { App } from '@demo-video-app/client/src/components/app/app';
 import { getMainTemplate, getWatchTemplate } from './templates/app-template';
 import { playerEmbedTemplate } from './templates/player-embed-template';
 import { playerLoaderTemplate } from './templates/player-loader-template';
@@ -70,8 +69,8 @@ app.use('/player/*', (req, res) => {
     body: playerEmbedTemplate(req),
   });
 });
-app.use('/watch/:id', handleSsrRequest(getWatchTemplate, App));
-app.use('*', handleSsrRequest(getMainTemplate, App));
+app.use('/watch/:id', handleSsrRequest(getWatchTemplate));
+app.use('*', handleSsrRequest(getMainTemplate));
 
 const server = app.listen(port, () => {
   // Server has started
