@@ -73,6 +73,7 @@ type InitPlayer<Api extends PlayerIframeApi | PlayerPublicApi> = (props: {
   container: string;
   disableIframe?: boolean;
   backgroundColor?: string;
+  disableLoader?: boolean;
   videoSource?: VideoSource;
 }) => Promise<Api>;
 

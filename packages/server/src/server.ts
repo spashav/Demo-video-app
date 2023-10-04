@@ -17,7 +17,7 @@ const app = express();
 const browserDist = path.join(process.cwd(), 'dist/packages/client/browser');
 const faviconDist = path.join(
   process.cwd(),
-  'dist/packages/client/browser/client/src/assets/favicon.ico'
+  'dist/packages/client/browser/client/src'
 );
 const serverAssetsDist = path.join(
   process.cwd(),
@@ -43,8 +43,9 @@ app.use('/player_loader.js', (req, res) => {
 });
 
 app.get(
-  'favicon.ico',
+  '/favicon.ico',
   express.static(faviconDist, {
+    fallthrough: false,
     maxAge: '1y',
   })
 );

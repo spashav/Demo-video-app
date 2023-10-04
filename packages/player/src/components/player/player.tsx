@@ -11,6 +11,7 @@ interface VideoConfig {
   id: string;
   source?: VideoSource;
   backgroundColor?: string;
+  disableLoader?: boolean;
 }
 
 export const Player: FC<{
@@ -63,6 +64,7 @@ export const Player: FC<{
   return (
     <div
       style={{ width: '100%', height: '100%', borderRadius: 24 }}
+      className={videoConfig.disableLoader ? 'video-player_disabled-loader' : ''}
       ref={videoRef}
     />
   );

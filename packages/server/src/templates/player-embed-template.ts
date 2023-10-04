@@ -1,12 +1,22 @@
 import { Request } from 'express';
 
 export const playerEmbedTemplate = (req: Request) => {
-  const match = /^\/player\/v(\d+)\/(\d+)$/.exec(req.originalUrl)
+  const match = /^\/player\/v(\d+)\/(\d+)$/.exec(req.baseUrl);
   if (!match) {
-    return 'Empty'
+    return 'Empty';
   }
-  const playerVersion = `v${match[1]}`
-  const contentId = match[2]
+  const queryConfig = Object.entries(req.query)
+    .map(([key, rawValue]) => {
+      const value =
+        rawValue === 'true' || rawValue === 'false'
+          ? rawValue
+          : `"${rawValue}"`;
+      return `${key}: ${value}`;
+    })
+    .join(',\n');
+
+  const playerVersion = `v${match[1]}`;
+  const contentId = match[2];
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -38,7 +48,8 @@ export const playerEmbedTemplate = (req: Request) => {
         <script type="module">
           window.PLAYER.inner.init({
             container: 'root',
-            id: "${contentId}"
+            id: "${contentId}",
+            ${queryConfig}
           })
         </script>
       </body>

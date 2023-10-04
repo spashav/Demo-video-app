@@ -33,6 +33,7 @@ export function Player({
         useFirstFrame: Boolean(useDelayedApp),
         videoSource,
         backgroundColor: useFake ? 'transparent' : undefined,
+        disableLoader: useFake,
       });
   }, [id]);
 
@@ -64,6 +65,7 @@ export function Player({
               scripts: window.APP_STATE.playerScripts,
               useFirstFrame: "${useDelayedApp}",
               backgroundColor: ${useFake ? '"transparent"' : 'undefined'},
+              disableLoader: ${useFake},
             });
           `,
         }}

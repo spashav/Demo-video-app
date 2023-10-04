@@ -7,9 +7,13 @@ export const initPublicApi = ({ playerVersion }: { playerVersion: string }) => {
   api.iframe.init = async ({
     id,
     container,
+    backgroundColor,
+    disableLoader,
   }: {
     id: string;
     container: string;
+    disableLoader?: boolean;
+    backgroundColor?: string;
   }) => {
     const elem = document.getElementById(container);
     if (!id) {
@@ -20,7 +24,9 @@ export const initPublicApi = ({ playerVersion }: { playerVersion: string }) => {
     }
     unsubscribeFromPrevIframe?.();
     const { width, height } = elem.getBoundingClientRect();
-    elem.innerHTML = `<iframe src="/player/v${playerVersion}/${id}" width="${width}px" height="${height}px" style="box-sizing:border-box;border:0;border-radius:24px;"/>`;
+    elem.innerHTML = `<iframe src="/player/v${playerVersion}/${id}?disableLoader=${disableLoader}&backgroundColor=${
+      backgroundColor || ''
+    }" width="${width}px" height="${height}px" style="box-sizing:border-box;border:0;border-radius:24px;"/>`;
     const iframe = elem.querySelector('iframe');
     const iframeWindow = iframe?.contentWindow;
     if (!iframeWindow) {

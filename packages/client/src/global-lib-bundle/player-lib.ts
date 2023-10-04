@@ -83,6 +83,7 @@ export class PlayerLib {
     scripts,
     useFirstFrame,
     backgroundColor,
+    disableLoader,
   }: {
     container: string;
     id: string;
@@ -91,12 +92,14 @@ export class PlayerLib {
     scripts?: string[];
     useFirstFrame?: boolean;
     backgroundColor?: string;
+    disableLoader?: boolean;
   }) => {
     const api = await getPlayerPublicApi().init({
       id,
       container,
       disableIframe,
       backgroundColor,
+      disableLoader,
       videoSource: videoSource
         ? {
             ...videoSource,

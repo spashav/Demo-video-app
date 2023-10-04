@@ -14,11 +14,13 @@ export function PlayerIframe({
   initialSource,
   playerApi,
   backgroundColor,
+  disableLoader,
 }: {
   initialContentId: string;
   initialSource?: VideoSource;
   playerApi: PlayerApiInnerIframe;
   backgroundColor?: string;
+  disableLoader?: boolean;
 }) {
   const [id, setId] = useState<string>(initialContentId);
   const [source, setSource] = useState<VideoSource | undefined>(initialSource);
@@ -40,7 +42,7 @@ export function PlayerIframe({
   return (
     <Player
       overridePlayerApi={playerApi}
-      videoConfig={{ id, source, backgroundColor }}
+      videoConfig={{ id, source, backgroundColor, disableLoader }}
     />
   );
 }

@@ -6,3 +6,7 @@
 .vjs-tech {
   border-radius: 24px;
 }
+div.video-player_disabled-loader .vjs-loading-spinner,
+div.video-player_disabled-loader .vjs-big-play-button {
+  display: none;
+}

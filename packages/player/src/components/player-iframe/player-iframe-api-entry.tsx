@@ -16,11 +16,13 @@ export const initPublicApi = ({ playerVersion }: { playerVersion: string }) => {
     videoSource,
     id,
     backgroundColor,
+    disableLoader,
   }: {
     id: string;
     container: string;
     videoSource?: VideoSource;
     backgroundColor?: string;
+    disableLoader?: boolean;
   }) => {
     if (playerApi && playerApi.getPlayerState() === PlayerState.DESTROYED) {
       videoSourceProvider.clear();
@@ -40,6 +42,7 @@ export const initPublicApi = ({ playerVersion }: { playerVersion: string }) => {
         playerApi={playerApi}
         initialSource={videoSource}
         backgroundColor={backgroundColor}
+        disableLoader={disableLoader}
       />
     );
     await new Promise<void>((resolve) => {
