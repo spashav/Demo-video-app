@@ -76,17 +76,8 @@ const getSource = <Keys extends keyof Source>(
 
 export const initApiRouter = () => {
   const router = Router();
-  let playerVersion = '1';
 
   router
-    .get('/change-player-version/:version', async (req, res) => {
-      const { version } = req.params;
-      playerVersion = version;
-      sendJson(res, { status: 'ok' });
-    })
-    .get('/get-player-version', async (req, res) => {
-      sendJson(res, { version: playerVersion });
-    })
     .get('/feed', async (req, res) => {
       await awaitTime(1000);
       const filter = new Set(['cover'] as const);
