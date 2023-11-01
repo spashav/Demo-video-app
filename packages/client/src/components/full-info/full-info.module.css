@@ -17,6 +17,9 @@
   line-height: 28px;
 }
 .fakeDescriptionLine {
+  margin-top: 16px;
+}
+.fakeDescriptionLine + .fakeDescriptionLine {
   margin-top: 8px;
 }
 .banner {

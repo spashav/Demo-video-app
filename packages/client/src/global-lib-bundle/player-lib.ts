@@ -5,16 +5,17 @@ import {
   PlayerState,
   VideoSource,
 } from '@demo-video-app/player/src/public-api';
-import { logError } from './log-error';
-import { pageLib } from './pages';
-import { logMetric } from './log-metric';
-import { loadScript } from './load-script';
+import {logError} from './log-error';
+import {pageLib} from './pages';
+import {logMetric} from './log-metric';
+import {loadScript} from './load-script';
 
 export interface PlayerLibState {
   currentTime: number;
   duration: number;
   playingState: PlayerPlayingState;
   playerState: PlayerState;
+  currentId: string | undefined
 }
 
 interface WindowWithHiddenStateAndScriptsPromise {
@@ -27,6 +28,7 @@ const initialState: PlayerLibState = {
   duration: 0,
   playingState: PlayerPlayingState.NOT_STARTED,
   playerState: PlayerState.NOT_INITED,
+  currentId: undefined,
 };
 
 export class PlayerLib {
@@ -43,6 +45,9 @@ export class PlayerLib {
     key: StateKey,
     state: PlayerLibState[StateKey]
   ) => {
+    if (this.state[key] === state) {
+      return
+    }
     this.state = {
       ...this.state,
       [key]: state,
@@ -95,6 +100,8 @@ export class PlayerLib {
     backgroundColor?: string;
     disableLoader?: boolean;
   }) => {
+    this.setState('playerState', PlayerState.INITIALIZING);
+    this.setState('currentId', id)
     const win = window as unknown as WindowWithHiddenStateAndScriptsPromise;
     await win.playerScriptsPromise;
     const api = await getPlayerPublicApi().init({

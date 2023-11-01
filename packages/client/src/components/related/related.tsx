@@ -7,7 +7,6 @@ import {
   PlayerState,
   VideoSource,
 } from '@demo-video-app/player/src/public-api';
-import type { PlayerLib } from '../../global-lib-bundle/player-lib';
 import { useApi } from '../../utils/use-api';
 import { Card } from '../card/card';
 import { useFlags } from '../../utils/use-flags';
@@ -103,7 +102,7 @@ export function Related({
       <div className={styles.fakes}>{fakes}</div>
       {isChunkedRendering ? START_SECOND_CHUNK : ''}
       {!related.isLoading &&
-        related.response.map(({ id, cover }) => (
+        related.response.map(({ id, cover }, index) => (
           <Card
             cover={cover}
             id={id}
@@ -111,7 +110,7 @@ export function Related({
             className={styles.card}
             onClick={onClick}
             ratio={0.6122}
-            withPreload={useFake && !related.isInitial}
+            withPreload={useFake && (!related.isInitial || index > 8)}
           />
         ))}
       {isChunkedRendering ? FINISH_SECOND_CHUNK : ''}

@@ -1,7 +1,7 @@
 import '../../../../../node_modules/video.js/dist/video-js.css';
 import './player.css';
 
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState, useReducer } from 'react';
 
 import { PlayerApi, InitOptions } from './player-api';
 import { VideoSource } from '../../public-api';
@@ -20,6 +20,22 @@ export const Player: FC<{
 }> = (props) => {
   const { videoConfig, overridePlayerApi } = props;
   const videoRef = useRef<HTMLDivElement>(null);
+  const prevId = useRef<string>();
+  const [, forceUpdate] = useReducer(x => x + 1, 0)
+  const isLongLoadingRef = useRef(false);
+  if (prevId.current !== videoConfig.id) {
+    isLongLoadingRef.current = false;
+  }
+  useEffect(() => {
+    prevId.current = videoConfig.id;
+    const timer = setTimeout(() => {
+      isLongLoadingRef.current = true;
+      forceUpdate();
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [videoConfig.id]);
   const [player] = useState(() => overridePlayerApi || new PlayerApi());
 
   const [source, setSource] = useState<VideoSource>(videoConfig.source);
@@ -64,7 +80,11 @@ export const Player: FC<{
   return (
     <div
       style={{ width: '100%', height: '100%', borderRadius: 24 }}
-      className={videoConfig.disableLoader ? 'video-player_disabled-loader' : ''}
+      className={
+        videoConfig.disableLoader && !isLongLoadingRef.current
+          ? 'video-player_disabled-loader'
+          : ''
+      }
       ref={videoRef}
     />
   );

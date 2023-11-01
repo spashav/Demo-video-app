@@ -36,18 +36,21 @@ export function TextProgress({
                     ratio={0.405}
                     borderRadius={8}
                   />
-                  <Fake
-                    className={styles.itemFakeText}
-                    width={'75%'}
-                    height={12}
-                    borderRadius={8}
-                  />
+                  <div className={styles.itemText}>
+                    <div className={styles.itemTime}/>
+                    <Fake
+                      className={styles.itemCover}
+                      width={'75%'}
+                      height={10}
+                      borderRadius={8}
+                    />
+                  </div>
                 </div>
               );
             })}
         </div>
-        <div className={styles.progress} style={{ bottom: 27 }}>
-          <Fake width={'100%'} height={13} borderRadius={8} />
+        <div className={styles.progress} style={{ height: 4 }}>
+          <div className={styles.backLine} />
         </div>
       </div>
     );
@@ -77,10 +80,10 @@ export function TextProgress({
                 id={contentId}
                 withPreload={useFake}
               />
-              <div className={styles.itemTime}>
-                {duration === 0 ? '' : formatDuration(duration * progress)}
-              </div>
               <div className={styles.itemText}>
+                <div className={styles.itemTime}>
+                  {duration === 0 ? '' : formatDuration(duration * progress)}
+                </div>
                 <div className={styles.itemTextInner}>{text}</div>
               </div>
             </div>

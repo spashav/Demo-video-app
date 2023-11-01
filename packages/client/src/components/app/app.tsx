@@ -9,7 +9,6 @@ import { ReactComponent as BurgerIcon } from '../../assets/burger.svg';
 import { getGlobalLib } from '../../utils/get-global-lib';
 
 const hardWork = (count: number) => {
-  return;
   Array(count)
     .fill(0)
     .map((_, index) => {
@@ -17,10 +16,12 @@ const hardWork = (count: number) => {
     });
 };
 if (typeof window !== 'undefined') {
+  // Большая лонгтаска на старте
   hardWork(5000000);
   setInterval(() => {
-    hardWork(1000000);
-  }, 100);
+    // Небольшие лонгтаски во время работы
+    hardWork(800000);
+  }, 200);
 }
 
 export function App() {

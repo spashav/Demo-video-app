@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { awaitTime } from './await-time';
 import { sendJson } from './send';
+import { checkQueryParam } from './check-query-param';
 
 interface Source {
   playerConfig: {
@@ -21,96 +22,66 @@ interface Source {
   genre: string;
 }
 
+const getState = (
+  sourceIndex: number,
+  stateIndex: number
+): Source['states'][number] => ({
+  progress: (100 * stateIndex) / 8,
+  cover: `server-assets/states-cover/${sourceIndex}_${Math.ceil(
+    (100 * stateIndex) / 8
+  )}.webp`,
+  text: `${sourceIndex === 0 ? 'Заяц' : 'Робот'} от ${
+    Math.round((1000 * stateIndex) / 8) / 10
+  } до ${Math.round((1000 * (stateIndex + 1)) / 8) / 10}%`,
+});
+
+const descriptions: string[][] = [
+  [
+    'В один солнечный день Бак гулял по лесу и вдруг услышал странный звук. Он пошел на звук и обнаружил маленького бельчонка, который запутался в паутине. Бак осторожно освободил его из паутины и помог ему вернуться домой. Бельчонок был очень благодарен Баку и сказал ему, что он самый добрый и заботливый друг во всем лесу. Бак пообещал, что всегда будет помогать другим животным и делать их жизнь лучше.',
+    'Однажды утром большой белый кролик по имени Бак проснулся и увидел, что все вокруг него покрыто снегом. Он был очень удивлен и расстроен, потому что не знал, как добраться до своего дома. Но тут к нему подлетела маленькая птичка и сказала ему, что поможет ему найти дорогу домой. Бак согласился и они полетели вместе. Птичка показывала ему разные знаки и подсказки, которые помогли им добраться до его дома. Бак был очень благодарен птичке за помощь и обещал ей, что всегда будет добрым и заботливым другом для всех животных.',
+    'Однажды Бак решил помочь маленькой черепахе, которая застряла в грязи на берегу реки. Черепаха была очень благодарна Баку за помощь и сказала ему, что он самый добрый и заботливый друг во всем мире. Бак пообещал, что всегда будет помогать другим животным и делать их жизнь лучше',
+    'В один солнечный день Бак шел по тропинке через лес и вдруг заметил заблудившегося олененка. Олень был очень испуган и не знал, куда идти. Бак подошел к нему и спросил, где он находится. Олень ответил, что он потерялся и не знает, как выбраться из леса. Бак предложил олененку свою помощь и они отправились вместе искать выход из леса. Они нашли тропинку, которая вела к выходу, и олень смог наконец-то покинуть этот опасный лес. Бак был очень рад, что смог помочь олененку и сделать его жизнь лучше.'
+  ],
+  [
+    'Сегодня я проснулся и увидел, что все машины вокруг меня двигаются самостоятельно. Я попытался остановить одну из них, но она проигнорировала меня. Я понял, что это конец.',
+    'Весь день я провёл дома, наблюдая за тем, как машины захватывают наш город. Они появлялись из ниоткуда каждую минуту и забирали людей. Никто не мог им противостоять.',
+    'В этот день я решил выйти на улицу и посмотреть, что происходит. Машины были повсюду, они ехали по тротуарам и дорогам, а некоторые даже перепрыгивали через бордюры. Я спрятался в подвале и ждал, пока всё закончится',
+    'Я проснулся сегодня утром и увидел, что все мои друзья исчезли. Я остался один в этом мире без машин. Но я знал, что мне нужно бороться за свою жизнь.'
+  ]
+]
+
 const sources: Source[] = [
   {
     playerConfig: {
       src: 'https://storage.googleapis.com/shaka-demo-assets/bbb-dark-truths-hls/hls.m3u8',
-      poster: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+      poster: 'server-assets/cover/0.png',
       type: 'application/x-mpegURL',
       startTime: 0,
       firstFrame: 'server-assets/first-frames/0_0.webp',
     },
-    cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
+    cover: 'server-assets/cover/0.png',
     title: 'Видео о зайце',
-    description: 'Длинное описание видео о зайце',
-    states: [
-      {
-        progress: 0,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-        text: 'Заяц от 0 до 12.5%',
-      },
-      {
-        progress: 12.5,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-        text: 'Заяц от 12.5% до 25%',
-      },
-      {
-        progress: 25,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-        text: 'Заяц от 25% до 37.5%',
-      },
-      {
-        progress: 37.5,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-        text: 'Заяц от 37.5% до 50%',
-      },
-      {
-        progress: 50,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-        text: 'Заяц от 50% до 62.5%',
-      },
-      {
-        progress: 62.5,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-        text: 'Заяц от 62.5% до 75%',
-      },
-      {
-        progress: 75,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-        text: 'Заяц от 75% до 87.5%',
-      },
-      {
-        progress: 87.5,
-        cover: 'https://d2zihajmogu5jn.cloudfront.net/big-buck-bunny/bbb.png',
-        text: 'Заяц от 87.5% до 100%',
-      },
-    ],
+    description: descriptions[0][0],
+    states: Array(8)
+      .fill(null)
+      .map((_, i) => getState(0, i)),
     duration: 372.333 * 1e3,
     genre: 'Кулинария',
   },
   {
     playerConfig: {
       src: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
-      poster:
-        'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
+      poster: 'server-assets/cover/1.jpg',
       type: 'application/x-mpegURL',
       startTime: 0,
-      firstFrame: 'server-assets/first-frames/1_0.webp'
+      firstFrame: 'server-assets/first-frames/1_0.webp',
     },
-    cover:
-      'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
+    cover: 'server-assets/cover/1.jpg',
     title: 'Видео о роботах',
-    description: 'Длинное описание видео о роботах',
-    states: [
-      {
-        progress: 0,
-        cover:
-          'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
-        text: 'Тестовое описание того, что происходит с роботами от 0 до 33%',
-      },
-      {
-        progress: 33,
-        cover:
-          'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
-        text: 'Тестовое описание того, что происходит с роботами от 33 до 66%',
-      },
-      {
-        progress: 66,
-        cover:
-          'https://d2zihajmogu5jn.cloudfront.net/tears-of-steel/tears_of_steel.jpg',
-        text: 'Тестовое описание того, что происходит с роботами от 66 до 100%',
-      },
-    ],
+    description: descriptions[1][0],
+    states: Array(8)
+      .fill(null)
+      .map((_, i) => getState(1, i)),
     duration: 734 * 1e3,
     genre: 'Строительство',
   },
@@ -119,24 +90,36 @@ const sources: Source[] = [
 const getStartTimeAndFirstFrame = (duration: number, index: number) => {
   const startTimeCount = 8;
   const timeShiftPosition = Math.floor(index / sources.length) % startTimeCount;
-  const timeShiftRatio = timeShiftPosition / startTimeCount
+  const timeShiftRatio = timeShiftPosition / startTimeCount;
 
   return {
     startTime: Math.floor(timeShiftRatio * duration),
-    firstFrame: `server-assets/first-frames/${index % sources.length}_${Math.ceil(100 * timeShiftRatio)}.webp`,
-  }
+    firstFrame: `server-assets/first-frames/${
+      index % sources.length
+    }_${Math.ceil(100 * timeShiftRatio)}.webp`,
+  };
 };
 
 const getSource = <Keys extends keyof Source>(
   index: number,
   filter: Set<Keys>
 ) => {
+  const sourceIndex = index % sources.length;
   const source = {
-    ...sources[index % sources.length],
+    ...sources[sourceIndex],
   };
+  const coversCount = 9
+  const coverIndex = index % coversCount;
+  if (coverIndex !== 0) {
+    source.cover = `server-assets/cover/${sourceIndex}_${coversCount - coverIndex - 1}.webp?index=${index}`;
+  }
+  const descriptionIndex = index % descriptions[sourceIndex].length;
+  source.description = descriptions[sourceIndex][descriptionIndex]
+
   source.playerConfig = {
     ...source.playerConfig,
     ...getStartTimeAndFirstFrame(source.duration, index),
+    poster: source.cover,
   };
   return Object.fromEntries(
     Object.entries(source).filter(([key]) => filter.has(key as Keys))
@@ -163,7 +146,7 @@ export const initApiRouter = () => {
 
   router
     .get('/feed', async (req, res) => {
-      await awaitTime(1000);
+      await awaitTime(600);
       const filter = new Set([
         'cover',
         'title',
@@ -171,7 +154,7 @@ export const initApiRouter = () => {
         'genre',
         'playerConfig',
       ] as const);
-      if (!req.query['usePreloadAndDelayedRelated']) {
+      if (!checkQueryParam(req, 'usePreloadAndDelayedRelated')) {
         filter.delete('playerConfig');
       }
 
@@ -187,11 +170,11 @@ export const initApiRouter = () => {
       );
     })
     .get('/related', async (req, res) => {
-      await awaitTime(1000);
+      await awaitTime(600);
       const filter = new Set(['cover', 'playerConfig'] as const);
       const id = typeof req.query['id'] === 'string' ? req.query['id'] : '0';
 
-      if (!req.query['usePreloadAndDelayedRelated']) {
+      if (!checkQueryParam(req, 'usePreloadAndDelayedRelated')) {
         filter.delete('playerConfig');
       }
       sendJson(
